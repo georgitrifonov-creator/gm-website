@@ -1,0 +1,147 @@
+{
+ "cleanUrls": true,
+ "trailingSlash": false,
+ "redirects": [
+  {
+   "source": "/about-us",
+   "destination": "/de/about",
+   "permanent": true
+  },
+  {
+   "source": "/blank-14",
+   "destination": "/de/team",
+   "permanent": true
+  },
+  {
+   "source": "/blank-8",
+   "destination": "/de/sales",
+   "permanent": true
+  },
+  {
+   "source": "/blank-9",
+   "destination": "/de/marketing",
+   "permanent": true
+  },
+  {
+   "source": "/blank-10",
+   "destination": "/de/operations",
+   "permanent": true
+  },
+  {
+   "source": "/blank-11",
+   "destination": "/de/key-account",
+   "permanent": true
+  },
+  {
+   "source": "/blank-7",
+   "destination": "/de/bootcamp",
+   "permanent": true
+  },
+  {
+   "source": "/blank-12",
+   "destination": "/de/careers",
+   "permanent": true
+  },
+  {
+   "source": "/blank-13",
+   "destination": "/de/events",
+   "permanent": true
+  },
+  {
+   "source": "/recruiting",
+   "destination": "/de/recruiting",
+   "permanent": true
+  },
+  {
+   "source": "/blank-1",
+   "destination": "/de/gnt-media",
+   "permanent": true
+  },
+  {
+   "source": "/blank",
+   "destination": "/de/gemini",
+   "permanent": true
+  },
+  {
+   "source": "/blank-2",
+   "destination": "/de/contact",
+   "permanent": true
+  },
+  {
+   "source": "/book-online",
+   "destination": "/de/book",
+   "permanent": true
+  },
+  {
+   "source": "/blank-3",
+   "destination": "/de/imprint",
+   "permanent": true
+  },
+  {
+   "source": "/blank-4",
+   "destination": "/de/privacy",
+   "permanent": true
+  },
+  {
+   "source": "/booking-calendar/:path*",
+   "destination": "/de/book",
+   "permanent": true
+  },
+  {
+   "source": "/service-page/:path*",
+   "destination": "/de/book",
+   "permanent": true
+  },
+  {
+   "source": "/bg/booking-calendar/:path*",
+   "destination": "/bg/book",
+   "permanent": true
+  },
+  {
+   "source": "/home",
+   "destination": "/",
+   "permanent": true
+  },
+  {
+   "source": "/bg/home",
+   "destination": "/bg",
+   "permanent": true
+  }
+ ],
+ "headers": [
+  {
+   "source": "/(.*)",
+   "headers": [
+    {
+     "key": "Content-Security-Policy",
+     "value": "default-src 'self'; script-src 'self' 'sha256-vVUpHxuKMoBtkbwQkOoLJ6eeu7SiTWtGf+qqkCUh10E='; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; media-src 'self'; connect-src 'self' https://jtmunudieeoqwtbjhcip.supabase.co; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'"
+    },
+    {
+     "key": "X-Content-Type-Options",
+     "value": "nosniff"
+    },
+    {
+     "key": "Referrer-Policy",
+     "value": "strict-origin-when-cross-origin"
+    },
+    {
+     "key": "X-Frame-Options",
+     "value": "DENY"
+    },
+    {
+     "key": "Permissions-Policy",
+     "value": "camera=(), microphone=(), geolocation=()"
+    }
+   ]
+  },
+  {
+   "source": "/(img|fonts|media)/(.*)",
+   "headers": [
+    {
+     "key": "Cache-Control",
+     "value": "public, max-age=31536000, immutable"
+    }
+   ]
+  }
+ ]
+}
