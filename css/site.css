@@ -1100,7 +1100,7 @@ body.over .nav:not(.solid) .brand .dark,body.darkhead .nav:not(.solid) .brand .d
 /* G.N.T-Zeichen größer, Lichtschein läuft weich aus */
 .sub .lg.gnt img{width:74%;margin:0 auto 2%;-webkit-mask-image:radial-gradient(ellipse 50% 50% at 50% 50%,#000 62%,transparent 100%);mask-image:radial-gradient(ellipse 50% 50% at 50% 50%,#000 62%,transparent 100%)}
 /* Fotos bleiben unterhalb der sichtbaren Kante der gestapelten Akten */
-@media (min-width:861px){.who{padding-top:48px}.who img,.who img.full{max-height:100%;height:auto;width:auto;max-width:100%;object-fit:contain}}
+@media (min-width:861px){.who{padding-top:48px}.who>img,.who>img.full{max-height:100%;height:auto;width:auto;max-width:100%;object-fit:contain}}
 
 /* Runde 10: Aufbau-Karten bleiben gestapelt, bis die letzte oben ist, und gehen dann gemeinsam weg */
 @media (min-width:861px){
