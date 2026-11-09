@@ -161,7 +161,7 @@
       var r = c.getBoundingClientRect(), k = clamp((vh - r.top) / (vh * .55), 0, 1), nx = bcards[i + 1], kn = 0;
       if (nx) { var rn = nx.getBoundingClientRect(); kn = clamp((vh - rn.top) / (vh * .55), 0, 1); }
       var inner = c.firstElementChild;
-      inner.style.transform = 'perspective(1600px) rotateX(' + ((1 - k) * 34) + 'deg) scale(' + (.94 + k * .06) + ')';
+      inner.style.transform = 'perspective(1600px) rotateX(' + (-(1 - k) * 30) + 'deg) scale(' + (1 + (1 - k) * .05) + ')'; // kommt unten vorne herein und legt sich nach hinten
     });
   });
 
