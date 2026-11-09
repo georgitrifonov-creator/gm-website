@@ -192,6 +192,12 @@
       var k = clamp(1 - (b.top - a.top) / (a.height * .9), 0, 1);
       f.querySelector('.sheet').style.filter = 'brightness(' + (1 - k * .25) + ')';
     });
+    // Tiefe: jede Akte kommt etwas größer herein und zieht sich bis zur Endposition auf ihr Maß zurück
+    folders.forEach(function (f, i) {
+      var st = parseFloat(getComputedStyle(f).top) || 0, t = f.getBoundingClientRect().top;
+      var k = clamp((t - st) / (window.innerHeight * .7), 0, 1);
+      f.style.transform = 'scale(' + (1 + .03 * k) + ')';
+    });
   });
 
   /* Kathedrale: Punkt auf der Schiene */
