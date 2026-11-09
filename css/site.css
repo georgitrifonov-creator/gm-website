@@ -1085,3 +1085,19 @@ body.over .nav:not(.solid) .brand .dark,body.darkhead .nav:not(.solid) .brand .d
 
 /* Runde 8: Flugzeug etwas kleiner */
 .strip .plane{width:320px;height:351px}
+
+/* Runde 9: Akten wie echte Mappen (Reiter und Blatt aus einem Stück), etwas breiter */
+.wrap-cases{max-width:1560px}
+.sheet{background:linear-gradient(180deg,#121A26 0,#0D141E 45%,var(--night))}
+.tab{--tc:#121A26;background:var(--tc);border-radius:18px 18px 0 0;box-shadow:0 0 0 1px rgba(83,206,251,.3),0 -12px 40px -16px rgba(83,206,251,.4)}
+.tab.light{--tc:var(--mist);box-shadow:0 -10px 30px -16px rgba(5,10,20,.3)}
+.tab::after{content:"";position:absolute;left:1px;right:1px;bottom:-4px;height:6px;background:var(--tc)}
+.tab::before{content:"";position:absolute;left:-16px;right:-16px;bottom:-2px;height:16px;pointer-events:none;
+  background:radial-gradient(circle at 0 0,transparent 15.5px,var(--tc) 16px) left bottom/16px 16px no-repeat,
+             radial-gradient(circle at 100% 0,transparent 15.5px,var(--tc) 16px) right bottom/16px 16px no-repeat}
+.folder{transform-origin:50% 0}
+@media (max-width:860px){.tab::before{display:none}}
+/* G.N.T-Zeichen größer, Lichtschein läuft weich aus */
+.sub .lg.gnt img{width:74%;margin:0 auto 2%;-webkit-mask-image:radial-gradient(ellipse 50% 50% at 50% 50%,#000 62%,transparent 100%);mask-image:radial-gradient(ellipse 50% 50% at 50% 50%,#000 62%,transparent 100%)}
+/* Fotos bleiben unterhalb der sichtbaren Kante der gestapelten Akten */
+@media (min-width:861px){.who{padding-top:48px}.who img,.who img.full{max-height:100%;height:auto;width:auto;max-width:100%;object-fit:contain}}
