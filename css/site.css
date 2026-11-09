@@ -1,4 +1,4 @@
-@import url(/fonts/fonts.css);
+@import url(../fonts/fonts.css);
 /* GM Services · Webseite. Markenfarben laut Brand Guidelines: Navy #052136, Weiß, Silber #E1E1E1, Himmelblau #53CEFB, Schwarz. Schrift Montserrat. */
 :root{
   --navy:#052136; --navy2:#0B2E4A; --night:#03080F; --ink:#0A1522; --text:#4A5666; --muted:#7A8594;
