@@ -203,17 +203,13 @@
   /* Deshalb wir */
   var sw = $('#switch'), why = $('#why');
   if (sw) {
-    var counted = false, touched = false;
+    var counted = false;
     sw.addEventListener('click', function (e) {
-      if (e.isTrusted) touched = true;
       var on = sw.getAttribute('aria-checked') !== 'true';
       sw.setAttribute('aria-checked', on); why.classList.toggle('on', on);
       if (on && !counted) { counted = true; $$('.pcard .n', why).forEach(function (n) { if (!RM) countUp(n); }); }
     });
-    if ('IntersectionObserver' in window) {
-      var wio = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting && e.intersectionRatio > .6) { setTimeout(function () { if (!touched && sw.getAttribute('aria-checked') !== 'true') sw.click(); }, 2200); wio.disconnect(); } }); }, { threshold: [.6] });
-      wio.observe(why);
-    }
+    // Schalter bleibt aus, bis man ihn selbst umlegt
   }
 
   /* Gruppe: Videos bei Hover */
