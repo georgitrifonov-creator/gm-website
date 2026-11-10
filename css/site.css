@@ -1197,3 +1197,14 @@ body.over .nav:not(.solid) .brand .dark,body.darkhead .nav:not(.solid) .brand .d
 .fq-a{padding:0 24px 22px 58px;color:var(--text)}
 @media (max-width:900px){.probs,.mods{grid-template-columns:1fr}.ways{grid-template-columns:1fr}.proof{grid-template-columns:1fr}.proof-who{min-height:0}.proof-who img{max-height:340px}.fq-a{padding-left:24px}}
 @media (min-width:901px) and (max-width:1180px){.mods{grid-template-columns:1fr 1fr}}
+/* Runde 16: "Kennen Sie das?" hell und ruhig, ohne schwarzen Block und ohne Konturzahlen */
+.prob{background:#fff;box-shadow:0 0 0 1px var(--line),0 24px 50px -30px rgba(5,33,54,.25)}
+.prob:hover{box-shadow:0 0 0 1px rgba(83,206,251,.55),0 0 34px -6px rgba(83,206,251,.45)}
+.prob-q{position:relative;padding:32px 30px 26px 56px;font:400 17px/1.5 var(--f);font-style:italic;color:var(--text)}
+.prob-q::before{content:"";position:absolute;left:30px;top:40px;width:10px;height:10px;transform:rotate(45deg);border-radius:2px;background:linear-gradient(135deg,var(--sky),#0A5D85);box-shadow:0 0 12px rgba(83,206,251,.6)}
+.prob-s{margin:auto 30px 0;padding:24px 0 32px;background:none;color:var(--ink);border-top:1px solid var(--line)}
+.prob-s .eyebrow{color:var(--sky2);margin-bottom:10px}
+.prob-s h3{font:700 20px/1.3 var(--f);text-transform:none;letter-spacing:0;color:var(--black);margin:0 0 10px}
+.prob-s p{color:var(--text);font-size:15.5px}
+.way h3{margin-top:0}
+@supports (grid-template-rows:subgrid){@media (min-width:901px){.probs{grid-template-rows:auto auto}.prob{display:grid;grid-row:span 2;grid-template-rows:subgrid;gap:0}.prob-s{margin-top:0}}}
