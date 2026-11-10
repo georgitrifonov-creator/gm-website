@@ -15,6 +15,19 @@
   $$('[data-setlang]').forEach(function (a) { a.addEventListener('click', function () { try { localStorage.setItem('gm-lang', a.dataset.setlang); } catch (e) {} }); });
   try { localStorage.setItem('gm-lang', LANG); } catch (e) {}
 
+  /* ---------- Ueberschriften am Handy einpassen: lange Woerter nie abschneiden ---------- */
+  function fitHeads() {
+    Array.prototype.forEach.call(document.querySelectorAll('.h1, .h2'), function (h) {
+      h.style.fontSize = '';
+      if (window.innerWidth > 600) return;
+      var fs = parseFloat(getComputedStyle(h).fontSize), n = 0;
+      while (h.scrollWidth > h.clientWidth + 1 && fs > 16 && n++ < 30) { fs -= 1; h.style.fontSize = fs + 'px'; }
+    });
+  }
+  fitHeads();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitHeads);
+  var fitT; window.addEventListener('resize', function () { clearTimeout(fitT); fitT = setTimeout(fitHeads, 150); });
+
   /* ---------- Kopfleiste ---------- */
   var nav = $('#nav'), lastY = 0;
   function onNav() {
