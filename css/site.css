@@ -1140,3 +1140,6 @@ body.over .nav:not(.solid) .brand .dark,body.darkhead .nav:not(.solid) .brand .d
 @media (max-width:600px){.locs{grid-template-columns:1fr}.loc{aspect-ratio:3/2}}
 @media (max-width:860px){.bc-img img,.zig-img img{object-fit:contain;display:block}.bc-in{overflow:hidden}}
 @media (max-width:600px){.loc{aspect-ratio:auto}.loc img{height:auto;display:block}}
+/* Runde 13: Fotos in den Akten nach oben, direkt unter den Namen */
+@media (min-width:861px){.who{align-items:flex-start;padding-top:clamp(76px,6.4vw,96px);padding-bottom:28px}.who>img,.who>img.full{max-height:100%}}
+@media (max-width:860px){.who{padding-top:60px}}
