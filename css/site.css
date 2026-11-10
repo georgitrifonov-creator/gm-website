@@ -1108,3 +1108,15 @@ body.over .nav:not(.solid) .brand .dark,body.darkhead .nav:not(.solid) .brand .d
 .bcard+.bcard{margin-top:24vh}
 .bc-in{height:calc(100% - (4 - var(--i)) * 12px)}
 }
+/* Runde 11: keine Reiter mehr, Name steht in der Karte */
+.folder .tab{display:none}
+.sheet,.folder .tab+.sheet{border-radius:28px}
+.cname{position:absolute;left:clamp(26px,3vw,46px);top:clamp(22px,2.6vw,38px);z-index:3;margin:0;font:300 clamp(22px,2.4vw,36px)/1 var(--f);letter-spacing:.02em;text-transform:uppercase;color:#fff;white-space:nowrap}
+.cname b{font-weight:800}
+.sheet.light .cname{color:var(--black)}
+@media (min-width:861px){
+.sheet{inset:0 0 calc((4 - var(--i)) * 22px)}
+.folder{height:calc(min(680px,calc(100svh - 172px)) + (4 - var(--i)) * 22px)}
+.who{padding-top:clamp(80px,8vw,110px)}
+}
+@media (max-width:860px){.sheet{margin-top:0}.who{padding-top:70px}.cname{font-size:22px}}
