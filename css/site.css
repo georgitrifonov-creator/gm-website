@@ -1143,3 +1143,5 @@ body.over .nav:not(.solid) .brand .dark,body.darkhead .nav:not(.solid) .brand .d
 /* Runde 13: Fotos in den Akten nach oben, direkt unter den Namen */
 @media (min-width:861px){.who{align-items:flex-start;padding-top:clamp(76px,6.4vw,96px);padding-bottom:28px}.who>img,.who>img.full{max-height:100%}}
 @media (max-width:860px){.who{padding-top:60px}}
+/* Runde 14: kein Bild mehr im Abschluss-Block, nur ruhiges Licht */
+.cta-bg{opacity:1;background:radial-gradient(50% 60% at 50% 30%,rgba(83,206,251,.16),transparent 70%),linear-gradient(180deg,#0B1320,var(--night))}
