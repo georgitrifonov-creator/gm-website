@@ -25,6 +25,27 @@
     lastY = y;
   }
   if (document.querySelector('.ph.dark, .soon')) document.body.classList.add('darkhead');
+  /* Kopfleiste nimmt die Farbe der Section dahinter an (Handy und PC) */
+  function bgOf(el) {
+    for (; el && el.nodeType === 1; el = el.parentElement) {
+      var c = getComputedStyle(el).backgroundColor, m = c.match(/[\d.]+/g);
+      if (m && (m.length < 4 || +m[3] > .5)) return [+m[0], +m[1], +m[2]];
+    }
+    return [255, 255, 255];
+  }
+  var tintKey = '';
+  function tint() {
+    if (!nav.classList.contains('solid')) { nav.style.removeProperty('--navbg'); nav.classList.remove('tdark'); tintKey = ''; return; }
+    var h = nav.getBoundingClientRect().bottom, x = window.innerWidth / 2, list = document.elementsFromPoint(x, Math.max(1, h - 2)), el = null;
+    for (var i = 0; i < list.length; i++) { if (!nav.contains(list[i])) { el = list[i]; break; } }
+    var c = bgOf(el), k = c.join(',');
+    if (k === tintKey) return; tintKey = k;
+    var lum = (.2126 * c[0] + .7152 * c[1] + .0722 * c[2]) / 255;
+    nav.style.setProperty('--navbg', 'rgba(' + k + ',.9)');
+    nav.classList.toggle('tdark', lum < .5);
+  }
+  var _onNav = onNav; onNav = function () { _onNav(); tint(); };
+  window.addEventListener('resize', function () { tintKey = ''; tint(); });
   window.addEventListener('scroll', onNav, { passive: true }); onNav();
   var burger = $('#burger');
   burger && burger.addEventListener('click', function () {
