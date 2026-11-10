@@ -1145,3 +1145,55 @@ body.over .nav:not(.solid) .brand .dark,body.darkhead .nav:not(.solid) .brand .d
 @media (max-width:860px){.who{padding-top:60px}}
 /* Runde 14: kein Bild mehr im Abschluss-Block, nur ruhiges Licht */
 .cta-bg{opacity:1;background:radial-gradient(50% 60% at 50% 30%,rgba(83,206,251,.16),transparent 70%),linear-gradient(180deg,#0B1320,var(--night))}
+/* Runde 15: Leistungsseiten mit mehr Inhalt */
+.ph .note{margin-top:16px;font-size:13.5px;color:rgba(255,255,255,.7);max-width:520px}
+.probs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.prob{position:relative;display:flex;flex-direction:column;border-radius:var(--r);background:var(--mist);overflow:hidden;transition:transform .4s var(--ease),box-shadow .4s}
+.prob:hover{transform:translateY(-4px);box-shadow:var(--glow)}
+.prob .pn{position:absolute;right:22px;top:18px;font:300 52px/1 var(--f);color:transparent;-webkit-text-stroke:1px var(--sky2)}
+.prob-q{padding:34px 30px 26px;font:500 18px/1.45 var(--f);color:var(--ink);padding-right:80px}
+.prob-s{margin-top:auto;padding:24px 30px 30px;background:var(--night);color:#fff}
+.prob-s .eyebrow{color:var(--sky)}
+.prob-s h3{font:700 18px/1.3 var(--f);text-transform:uppercase;letter-spacing:.03em;margin:10px 0 8px}
+.prob-s p{color:#B7C2CE;font-size:15px}
+.mods{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.mod{padding:30px 28px;border-radius:var(--r);background:#fff;box-shadow:0 0 0 1px var(--line)}
+.mod-n{font:600 12px var(--f);letter-spacing:.16em;color:var(--sky2)}
+.mod h3{font:700 18px/1.3 var(--f);color:var(--black);margin:14px 0 10px}
+.mod p{color:var(--text);font-size:15px}
+.mod-res{display:flex;gap:16px;align-items:flex-start;background:var(--night);box-shadow:0 0 0 1px rgba(83,206,251,.35),0 0 40px -12px rgba(83,206,251,.5)}
+.mod-res .dia{flex:none;margin-top:6px}
+.mod-res p{color:#fff;font:500 17px/1.45 var(--f)}
+.ways{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.way{padding:clamp(28px,3.4vw,46px);border-radius:var(--r);background:var(--mist)}
+.way-n{font:300 46px/1 var(--f);color:transparent;-webkit-text-stroke:1px var(--sky2)}
+.way h3{font:700 22px/1.3 var(--f);color:var(--black);margin:14px 0 12px}
+.way p{color:var(--text)}
+.way .link{margin-top:18px;display:inline-flex}
+.way.dk{background:var(--night);color:#fff}
+.way.dk h3{color:#fff}.way.dk p{color:#B7C2CE}.way.dk .link{color:#fff}
+.way .ticks{margin-top:8px}
+.proof{display:grid;grid-template-columns:.8fr 1.2fr;border-radius:28px;overflow:hidden;background:linear-gradient(180deg,#121A26,#0D141E);box-shadow:0 0 0 1px rgba(83,206,251,.3),0 0 60px -12px rgba(83,206,251,.4)}
+.proof-who{display:flex;align-items:flex-start;justify-content:center;padding:36px 20px 0;background:radial-gradient(70% 60% at 50% 70%,rgba(83,206,251,.22),transparent 70%);min-height:360px}
+.proof-who img{max-height:460px;width:auto;max-width:100%;object-fit:contain;filter:drop-shadow(0 20px 30px rgba(0,0,0,.5))}
+.proof-what{position:relative;padding:clamp(26px,3.4vw,50px);color:#fff}
+.proof-what .cname{position:static;margin-bottom:18px}
+.proof-what .logo{height:clamp(40px,4vw,60px);width:auto;max-width:240px;object-fit:contain;object-position:left center;margin-bottom:20px}
+.proof-what h3{font:400 clamp(20px,2vw,28px)/1.3 var(--f)}
+.proof-what h3 b{font-weight:800;color:var(--sky)}
+.proof-what .link{margin-top:24px;display:inline-flex;color:#fff}
+.narrow-faq{max-width:900px}
+.faqs{display:grid;gap:10px}
+.fq{border-radius:18px;background:#fff;box-shadow:0 0 0 1px var(--line);transition:box-shadow .3s}
+.fq[open]{box-shadow:0 0 0 1px rgba(83,206,251,.6),0 10px 30px -14px rgba(83,206,251,.6)}
+.fq summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:16px;padding:20px 24px;font:600 16.5px/1.4 var(--f);color:var(--black)}
+.fq summary::-webkit-details-marker{display:none}
+.fq-n{font:600 12px var(--f);letter-spacing:.14em;color:var(--sky2);flex:none}
+.fq-q{flex:1}
+.fq-x{position:relative;width:16px;height:16px;flex:none}
+.fq-x::before,.fq-x::after{content:"";position:absolute;left:0;right:0;top:7px;height:2px;border-radius:2px;background:currentColor;transition:transform .3s var(--ease)}
+.fq-x::after{transform:rotate(90deg)}
+.fq[open] .fq-x::after{transform:rotate(0)}
+.fq-a{padding:0 24px 22px 58px;color:var(--text)}
+@media (max-width:900px){.probs,.mods{grid-template-columns:1fr}.ways{grid-template-columns:1fr}.proof{grid-template-columns:1fr}.proof-who{min-height:0}.proof-who img{max-height:340px}.fq-a{padding-left:24px}}
+@media (min-width:901px) and (max-width:1180px){.mods{grid-template-columns:1fr 1fr}}
