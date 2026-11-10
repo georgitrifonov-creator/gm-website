@@ -1120,3 +1120,23 @@ body.over .nav:not(.solid) .brand .dark,body.darkhead .nav:not(.solid) .brand .d
 .who{padding-top:clamp(80px,8vw,110px)}
 }
 @media (max-width:860px){.sheet{margin-top:0}.who{padding-top:70px}.cname{font-size:22px}}
+/* Runde 12: Kopfleiste in der Farbe der Section dahinter */
+#nav.solid{background:var(--navbg,rgba(255,255,255,.88));box-shadow:none}
+#nav.solid.tdark{color:#fff}
+#nav.solid.tdark .brand .light{opacity:1}
+#nav.solid.tdark .brand .dark{opacity:0}
+#nav.solid.tdark .btn{color:#fff;background:rgba(255,255,255,.12);box-shadow:inset 0 0 0 1px rgba(255,255,255,.55)}
+/* Runde 12: am Handy Bilder ganz zeigen, nichts abschneiden */
+@media (max-width:860px){
+.zig-img{aspect-ratio:auto}
+.zig-img img{height:auto;aspect-ratio:auto}
+.bc-in{grid-template-columns:1fr;height:auto}
+.bc-img{height:auto}
+.bc-img img{height:auto}
+.who{height:auto;padding-top:64px}
+.who>img,.who>img.full{width:100%;height:auto;max-height:none;object-fit:contain}
+.sheet.light .who{height:auto;min-height:240px}
+}
+@media (max-width:600px){.locs{grid-template-columns:1fr}.loc{aspect-ratio:3/2}}
+@media (max-width:860px){.bc-img img,.zig-img img{object-fit:contain;display:block}.bc-in{overflow:hidden}}
+@media (max-width:600px){.loc{aspect-ratio:auto}.loc img{height:auto;display:block}}
