@@ -121,9 +121,7 @@
   var tasks = [];
   var ticking = false, moving = false, lastT = 0, A = .25;
   function sm(o, key, target) {
-    var m = o._sm || (o._sm = {}), c = m[key];
-    if (c === undefined || Math.abs(target - c) < .0005) { m[key] = target; return target; }
-    c += (target - c) * A; m[key] = c; moving = true; return c;
+    return target; /* kein Nachgleiten mehr: Bewegung folgt exakt dem Scrollen und stoppt sofort */
   }
   function frame(t) {
     ticking = false; moving = false;
