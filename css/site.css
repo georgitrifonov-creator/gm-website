@@ -1307,3 +1307,8 @@ html[lang] .h1,html[lang] .h2{hyphens:manual;-webkit-hyphens:manual;overflow-wra
 @media (max-width:600px){.why .pcard .k{font-size:10px;letter-spacing:.03em;overflow-wrap:normal;hyphens:auto;-webkit-hyphens:auto}}
 @media (max-width:600px){a.link{padding-block:12px}}
 @media (max-width:600px){.h1,.h2{max-width:none!important}}
+
+/* ---------- Runde 19: ruhiges Scrollen (Safari) ---------- */
+.sheet>.dim{position:absolute;inset:0;border-radius:inherit;background:#000;opacity:0;pointer-events:none;z-index:6}
+.bc-in,.folder,.strip,.strip .plane,.mcard,.hero-copy,.ph-img img{transition:none}
+.bc-in,.folder,.ph-img img,.hero-copy{-webkit-backface-visibility:hidden;backface-visibility:hidden}
