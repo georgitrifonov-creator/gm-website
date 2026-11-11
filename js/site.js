@@ -57,7 +57,8 @@
   }
   var tintKey = '';
   function tint() {
-    if (!nav.classList.contains('solid')) { nav.style.removeProperty('--navbg'); nav.classList.remove('tdark'); tintKey = ''; return; }
+    if (!nav.classList.contains('solid')) { if (tintKey !== '') { nav.style.removeProperty('--navbg'); nav.classList.remove('tdark'); tintKey = ''; } return; }
+    if (nav.classList.contains('hide')) return;
     var h = nav.getBoundingClientRect().bottom, x = window.innerWidth / 2, list = document.elementsFromPoint(x, Math.max(1, h - 2)), el = null;
     for (var i = 0; i < list.length; i++) { if (!nav.contains(list[i])) { el = list[i]; break; } }
     while (el && el.parentElement && el.parentElement.tagName !== 'MAIN' && el.parentElement !== document.body) el = el.parentElement;
@@ -70,7 +71,7 @@
   var _onNav = onNav; onNav = function () { _onNav(); tint(); };
   window.addEventListener('resize', function () { tintKey = ''; tint(); });
   window.addEventListener('scroll', onNav, { passive: true }); onNav();
-  nav.addEventListener('focusin', function () { nav.classList.remove('hide'); navRun = 0; });
+  nav.addEventListener('focusin', function () { nav.classList.remove('hide'); navRun = 0; tint(); });
   var burger = $('#burger');
   burger && burger.addEventListener('click', function () {
     var o = document.body.classList.toggle('menu-open');
@@ -325,6 +326,20 @@
     window.addEventListener('scroll', wake, { passive: true }); wake();
   }
   frame();
+
+  /* Runde 28: ausserhalb des Bildes ruht alles (sonst zittern haftende Karten in Safari) */
+  if ('IntersectionObserver' in window) {
+    var offIO = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        e.target.classList.toggle('offscr', !e.isIntersecting);
+        if (e.target.id === 'hero') {
+          var v = $('#heroVid'); if (!v || !v.play) return;
+          if (e.isIntersecting) { var q = v.play(); q && q.catch && q.catch(function () {}); } else v.pause();
+        }
+      });
+    }, { rootMargin: '300px 0px' });
+    $$('main > section, footer').forEach(function (x) { offIO.observe(x); });
+  }
 
   /* ---------- Formulare ---------- */
   function api(action, body) {
