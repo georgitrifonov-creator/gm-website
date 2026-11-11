@@ -1311,4 +1311,14 @@ html[lang] .h1,html[lang] .h2{hyphens:manual;-webkit-hyphens:manual;overflow-wra
 /* ---------- Runde 19: ruhiges Scrollen (Safari) ---------- */
 .sheet>.dim{position:absolute;inset:0;border-radius:inherit;background:#000;opacity:0;pointer-events:none;z-index:6}
 .bc-in,.folder,.strip,.strip .plane,.mcard,.hero-copy,.ph-img img{transition:none}
-.bc-in,.folder,.ph-img img,.hero-copy{-webkit-backface-visibility:hidden;backface-visibility:hidden}
+
+/* ---------- Runde 20: Scroll-Effekte im Browser-Takt (kein Zittern) ---------- */
+.folder{transform:none!important;will-change:auto}
+@keyframes phPar{from{transform:translate3d(0,0,0) scale(1.06)}to{transform:translate3d(0,286px,0) scale(1.06)}}
+@keyframes heroCopy{0%{transform:translate3d(0,0,0);opacity:1}59.2%{opacity:0}100%{transform:translate3d(0,45.5vh,0);opacity:0}}
+@keyframes heroVid{from{transform:scale(1)}to{transform:scale(1.156)}}
+@keyframes bcIn{from{transform:perspective(1600px) rotateX(-30deg) scale(1.05)}to{transform:perspective(1600px) rotateX(0deg) scale(1)}}
+html.sda .ph-img img{animation:phPar linear both;animation-timeline:scroll(root);animation-range:0px 1300px}
+html.sda .hero-copy{animation:heroCopy linear both;animation-timeline:scroll(root);animation-range:0px 130vh}
+html.sda #heroVid{animation:heroVid linear both;animation-timeline:scroll(root);animation-range:0px 130vh}
+html.sda .bc-in{animation:bcIn linear both;animation-timeline:view();animation-range:entry 0% entry 70%}
