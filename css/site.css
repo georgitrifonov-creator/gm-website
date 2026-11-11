@@ -1384,7 +1384,7 @@ a.job2{text-decoration:none;color:inherit}
 .ap-filters .chip-btn.on{color:#fff}
 
 /* ---------- Runde 23: Steigflug im Browser-Takt, Karten ohne Echtzeit-Weichzeichner ---------- */
-html.sda #flight{view-timeline:--flight block}
+html.sda #flight.live{view-timeline:--flight block}
 html.sda #flight.live #strip{animation:flStrip linear both;animation-timeline:--flight;animation-range:contain 0% contain 100%}
 html.sda #flight.live #plane{animation:flPlane linear both;animation-timeline:--flight;animation-range:contain 0% contain 100%}
 .mcard{background:rgba(255,255,255,.93);backdrop-filter:none;-webkit-backdrop-filter:none}
@@ -1404,3 +1404,14 @@ html.sda #daysFill{width:100%!important;transform-origin:0 50%;transform:scaleX(
 /* ---------- Runde 27: Stapel-Karten ganz ohne Scroll-Animation (Safari: haftende Karten zittern sonst) ---------- */
 .bc-in{transform:none!important;animation:none!important;will-change:auto}
 .sheet>.dim{display:none}
+
+/* ---------- Runde 28: haftende Karten ruhig in Safari ----------
+   Kein Beschnitt (overflow clip) mehr um haftende Elemente, kein weiches Scrollen per CSS,
+   Dauer-Animationen ruhen ausserhalb des Bildes. */
+html{scroll-behavior:auto}
+@media (min-width:861px){
+  html{overflow-x:hidden}
+  body{overflow-x:visible}
+  .flight,.build-sec,.cases{overflow-x:visible}
+}
+.offscr,.offscr *,.offscr *::before,.offscr *::after{animation-play-state:paused!important}
