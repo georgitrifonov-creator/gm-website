@@ -1497,3 +1497,9 @@ html{scroll-behavior:auto}
   .gstats b{font-size:clamp(38px,11vw,54px)}
   .gstats span{letter-spacing:.14em;font-size:11px;margin-top:12px}
 }
+
+/* ---------- Runde 37: Bogen im Abschluss laeuft unten weich aus (kein harter Schnitt) ---------- */
+.arch-soft{position:relative;border:0;box-shadow:none}
+.arch-soft>i{position:absolute;inset:-46px -46px -6px;padding:46px 46px 0;pointer-events:none;-webkit-mask-image:linear-gradient(#000 0,#000 46%,transparent 94%);mask-image:linear-gradient(#000 0,#000 46%,transparent 94%)}
+.arch-soft>i>b{display:block;height:100%;border-radius:55px 55px 0 0;border:4px solid #fff;border-bottom:0;box-shadow:0 -6px 30px rgba(83,206,251,.7),inset 0 6px 30px rgba(83,206,251,.5)}
+.arch-soft .king{position:relative;z-index:1}
