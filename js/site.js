@@ -376,12 +376,35 @@
       if (dlg.showModal) dlg.showModal(); else dlg.setAttribute('open', '');
       try { localStorage.setItem('gm-egg', '1'); } catch (e) {}
     });
-    $('#eggGo').addEventListener('click', function () {
-      dlg.close ? dlg.close() : dlg.removeAttribute('open');
-      var c = $('#f-code'); if (c) c.value = $('#eggCode').textContent.trim();
-      $('#apply').scrollIntoView({ behavior: RM ? 'auto' : 'smooth' });
-    });
     dlg.addEventListener('click', function (e) { if (e.target === dlg) dlg.close(); });
+  }
+
+  /* ---------- Bewerbung: erst Stelle waehlen, dann Formular ---------- */
+  var applier = $('#applier');
+  if (applier) {
+    var apJobs = $$('.ap-job', applier), apPick = $('#apPick'), apForm = $('#apForm'), apHid = $('#f-job'), apSteps = $$('.bk-steps li', applier);
+    var apStep = function (n) { apSteps.forEach(function (s, i) { s.classList.toggle('on', i === n - 1); s.classList.toggle('ok', i < n - 1); }); };
+    var apUrl = function (id) { try { var u = new URL(location.href); if (id) u.searchParams.set('job', id); else u.searchParams.delete('job'); history.replaceState(null, '', u.pathname + u.search); } catch (e) {} };
+    var apChoose = function (id, user) {
+      var b = apJobs.filter(function (x) { return x.dataset.ap === id; })[0]; if (!b) return;
+      apJobs.forEach(function (x) { x.classList.toggle('on', x === b); x.setAttribute('aria-pressed', x === b); });
+      apHid.value = id; $('#apChosen').textContent = $('.ap-t', b).textContent;
+      apPick.hidden = true; apForm.hidden = false; apStep(2); apUrl(id);
+      if (user) { applier.scrollIntoView({ behavior: RM ? 'auto' : 'smooth', block: 'start' }); setTimeout(function () { var n = $('#f-name'); n && n.focus({ preventScroll: true }); }, 500); }
+    };
+    apJobs.forEach(function (b) { b.addEventListener('click', function () { apChoose(b.dataset.ap, true); }); });
+    $('#apChange').addEventListener('click', function () { apForm.hidden = true; apPick.hidden = false; apStep(1); apUrl(''); });
+    $$('[data-apf]', applier).forEach(function (c) {
+      c.addEventListener('click', function () {
+        $$('[data-apf]', applier).forEach(function (x) { x.classList.toggle('on', x === c); });
+        apJobs.forEach(function (x) { x.hidden = c.dataset.apf !== 'all' && x.dataset.cat !== c.dataset.apf && x.dataset.ap !== 'init'; });
+      });
+    });
+    var apQ = new URLSearchParams(location.search), apCode = apQ.get('code');
+    if (apCode && $('#f-code')) $('#f-code').value = apCode.slice(0, 30);
+    apStep(1);
+    if (apQ.get('job')) apChoose(apQ.get('job'), false);
+    new MutationObserver(function () { if ($('.done', apForm)) apStep(4); }).observe(apForm, { childList: true });
   }
 
   /* ---------- Terminbuchung ---------- */
