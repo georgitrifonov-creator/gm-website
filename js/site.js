@@ -129,7 +129,8 @@
     ticking = false; moving = false;
     var dt = lastT ? Math.min(64, t - lastT) : 16.7; lastT = t;
     A = 1 - Math.pow(.78, dt / 16.7);
-    var vh = window.innerHeight; tasks.forEach(function (f) { f(vh); });
+    var vh = window.innerHeight, ws = tasks.map(function (f) { return f(vh); });
+    ws.forEach(function (w) { if (typeof w === 'function') w(); });
     if (moving) req(); else lastT = 0;
   }
   function req() { if (!ticking) { ticking = true; requestAnimationFrame(frame); } }
@@ -220,10 +221,11 @@
       if (r.bottom < 0 || r.top > vh) return;
       if (SDA) {
         var pq = clamp(-r.top / tot, 0, 1), dq = Math.round(pq * 90);
-        if (now.textContent !== String(dq)) now.textContent = dq;
-        fill.style.width = (pq * 100).toFixed(2) + '%';
-        [0, 30, 45, 90].forEach(function (d, i) { marks[i].classList.toggle('on', dq >= d); });
-        return;
+        return function () {
+          if (now.textContent !== String(dq)) now.textContent = dq;
+          fill.style.transform = 'scaleX(' + pq.toFixed(4) + ')';
+          [0, 30, 45, 90].forEach(function (d, i) { marks[i].classList.toggle('on', dq >= d); });
+        };
       }
       var p = sm(flight, 'p', clamp(-r.top / tot, 0, 1));
       var tx = -(3600 * U - W) * p;
@@ -276,29 +278,34 @@
     var sws = $$('.sw', stmt);
     if (RM) sws.forEach(function (x) { x.classList.add('on'); });
     else tasks.push(function (vh) {
-      var r = stmt.getBoundingClientRect(), p = clamp((vh * .85 - r.top) / (r.height + vh * .35), 0, 1), n = Math.round(p * sws.length * 1.08);
-      sws.forEach(function (x, i) { x.classList.toggle('on', i < n); });
+      var r = stmt.getBoundingClientRect(); if (r.bottom < -50 || r.top > vh + 50) return;
+      var p = clamp((vh * .85 - r.top) / (r.height + vh * .35), 0, 1), n = Math.round(p * sws.length * 1.08);
+      if (n === stmt._n) return; stmt._n = n;
+      return function () { sws.forEach(function (x, i) { x.classList.toggle('on', i < n); }); };
     });
   }
 
   /* Akten stapeln */
   var folders = $$('.folder');
-  if (!RM && folders.length && window.innerWidth > 860) tasks.push(function () {
+  var dims = folders.map(function (f) {
+    var sh = f.querySelector('.sheet'), dm = document.createElement('i'); dm.className = 'dim'; dm.setAttribute('aria-hidden', 'true'); sh && sh.appendChild(dm); return dm;
+  });
+  var foldersBox = folders.length ? folders[0].parentNode : null;
+  if (!RM && folders.length && window.innerWidth > 860) tasks.push(function (vh) {
+    var box = foldersBox.getBoundingClientRect(); if (box.bottom < -50 || box.top > vh + 50) return;
+    var rs = folders.map(function (f) { return f.getBoundingClientRect(); }), vals = [];
     folders.forEach(function (f, i) {
-      var nx = folders[i + 1]; if (!nx) return;
-      var a = f.getBoundingClientRect(), b = nx.getBoundingClientRect();
-      var k = sm(f, 'd', clamp(1 - (b.top - a.top) / (a.height * .9), 0, 1));
-      var sh = f.querySelector('.sheet'), dm = sh.querySelector('.dim');
-      if (!dm) { dm = document.createElement('i'); dm.className = 'dim'; dm.setAttribute('aria-hidden', 'true'); sh.appendChild(dm); }
-      dm.style.opacity = (k * .25).toFixed(3);
+      if (!folders[i + 1]) return;
+      var k = sm(f, 'd', clamp(1 - (rs[i + 1].top - rs[i].top) / (rs[i].height * .9), 0, 1));
+      vals[i] = (k * .25).toFixed(3);
     });
-
+    return function () { vals.forEach(function (v, i) { if (dims[i]._v !== v) { dims[i]._v = v; dims[i].style.opacity = v; } }); };
   });
 
   /* Kathedrale: Punkt auf der Schiene */
   var rail = $('#rail'), dot = $('#dot');
   if (rail && dot) tasks.push(function (vh) {
-    var r = rail.getBoundingClientRect(); var p = sm(dot, 'p', clamp((vh * .55 - r.top) / r.height, 0, 1)); dot.style.transform = 'translate3d(0,' + (p * r.height).toFixed(1) + 'px,0)';
+    var r = rail.getBoundingClientRect(); var p = sm(dot, 'p', clamp((vh * .55 - r.top) / r.height, 0, 1)); return function () { dot.style.transform = 'translate3d(0,' + (p * r.height).toFixed(1) + 'px,0)'; };
   });
 
   /* Deshalb wir */
