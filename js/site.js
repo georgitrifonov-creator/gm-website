@@ -31,17 +31,17 @@
   /* ---------- Kopfleiste ---------- */
   /* Runter scrollen blendet die Leiste aus, erst echtes Hochscrollen holt sie zurueck.
      Kleine Ruckler (iOS-Nachfedern, Adressleiste, nachladende Bilder) zaehlen nicht. */
-  var nav = $('#nav'), lastY = 0, run = 0;
+  var nav = $('#nav'), lastY = 0, navRun = 0;
   function onNav() {
     var max = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
     var y = Math.min(Math.max(window.scrollY, 0), max), d = y - lastY;
     nav.classList.toggle('solid', y > 40);
-    if (y <= nav.offsetHeight || document.body.classList.contains('menu-open')) { nav.classList.remove('hide'); run = 0; }
+    if (y <= nav.offsetHeight || document.body.classList.contains('menu-open')) { nav.classList.remove('hide'); navRun = 0; }
     else if (d !== 0) {
-      if ((d > 0) !== (run > 0)) run = 0;
-      run += d;
-      if (run > 12) nav.classList.add('hide');
-      else if (run < -40) nav.classList.remove('hide');
+      if ((d > 0) !== (navRun > 0)) navRun = 0;
+      navRun += d;
+      if (navRun > 12) nav.classList.add('hide');
+      else if (navRun < -40) nav.classList.remove('hide');
     }
     lastY = y;
   }
@@ -59,6 +59,7 @@
     if (!nav.classList.contains('solid')) { nav.style.removeProperty('--navbg'); nav.classList.remove('tdark'); tintKey = ''; return; }
     var h = nav.getBoundingClientRect().bottom, x = window.innerWidth / 2, list = document.elementsFromPoint(x, Math.max(1, h - 2)), el = null;
     for (var i = 0; i < list.length; i++) { if (!nav.contains(list[i])) { el = list[i]; break; } }
+    while (el && el.parentElement && el.parentElement.tagName !== 'MAIN' && el.parentElement !== document.body) el = el.parentElement;
     var c = bgOf(el), k = c.join(',');
     if (k === tintKey) return; tintKey = k;
     var lum = (.2126 * c[0] + .7152 * c[1] + .0722 * c[2]) / 255;
@@ -68,7 +69,7 @@
   var _onNav = onNav; onNav = function () { _onNav(); tint(); };
   window.addEventListener('resize', function () { tintKey = ''; tint(); });
   window.addEventListener('scroll', onNav, { passive: true }); onNav();
-  nav.addEventListener('focusin', function () { nav.classList.remove('hide'); run = 0; });
+  nav.addEventListener('focusin', function () { nav.classList.remove('hide'); navRun = 0; });
   var burger = $('#burger');
   burger && burger.addEventListener('click', function () {
     var o = document.body.classList.toggle('menu-open');
@@ -115,6 +116,8 @@
   /* ---------- Scroll-Effekte ---------- */
   /* Safari meldet Scroll-Schritte unregelmaessig. Werte springen deshalb nicht direkt,
      sondern gleiten in wenigen Frames zum Ziel (sm). Das nimmt das Zittern. */
+  var SDA = !RM && window.CSS && CSS.supports && CSS.supports('animation-timeline: view()') && CSS.supports('animation-range: entry 0% entry 70%');
+  if (SDA) document.documentElement.classList.add('sda');
   var tasks = [];
   var ticking = false, moving = false, lastT = 0, A = .25;
   function sm(o, key, target) {
@@ -137,8 +140,8 @@
     var k = parseFloat(el.dataset.par);
     tasks.push(function (vh) { var r = el.parentNode.getBoundingClientRect(); if (r.bottom < -100 || r.top > vh + 100) return; el.style.transform = 'translate3d(0,' + ((r.top + r.height / 2 - vh / 2) * -k).toFixed(1) + 'px,0)'; });
   });
-  if (!RM) $$('.ph-img img').forEach(function (el) {
-    tasks.push(function () { var y = sm(el, 'y', Math.min(window.scrollY, 1300)); el.style.transform = 'translate3d(0,' + (y * .22).toFixed(2) + 'px,0) scale(1.06)'; });
+  if (!RM && !SDA) $$('.ph-img img').forEach(function (el) {
+    tasks.push(function () { var y = Math.min(window.scrollY, 1300); el.style.transform = 'translate3d(0,' + (y * .22).toFixed(1) + 'px,0) scale(1.06)'; });
   });
 
   /* Hero */
@@ -159,8 +162,8 @@
     }
     var vid = $('#heroVid'), copy = $('#heroCopy');
     if (vid) { vid.addEventListener('playing', function () { $('.hero .poster').style.opacity = 0; }); }
-    if (!RM) tasks.push(function (vh) {
-      var y = sm(hero, 'y', Math.min(window.scrollY, vh * 1.3)); if (y > vh * 1.25 && window.scrollY > vh * 1.3) return;
+    if (!RM && !SDA) tasks.push(function (vh) {
+      var y = window.scrollY; if (y > vh * 1.3) return;
       var p = y / vh;
       if (vid) vid.style.transform = 'scale(' + (1 + p * .12) + ')';
       copy.style.transform = 'translate3d(0,' + (y * .35) + 'px,0)'; copy.style.opacity = 1 - p * 1.3;
@@ -212,7 +215,7 @@
 
   /* Der komplette Aufbau: Karten kippen von unten hoch und stapeln sich */
   var bcards = $$('.bcard');
-  if (bcards.length && !RM) tasks.push(function (vh) {
+  if (bcards.length && !RM && !SDA) tasks.push(function (vh) {
     bcards.forEach(function (c, i) {
       var r = c.getBoundingClientRect(), k = sm(c, 'k', clamp((vh - r.top) / (vh * .55), 0, 1)), nx = bcards[i + 1], kn = 0;
       if (nx) { var rn = nx.getBoundingClientRect(); kn = clamp((vh - rn.top) / (vh * .55), 0, 1); }
@@ -250,12 +253,7 @@
       if (!dm) { dm = document.createElement('i'); dm.className = 'dim'; dm.setAttribute('aria-hidden', 'true'); sh.appendChild(dm); }
       dm.style.opacity = (k * .25).toFixed(3);
     });
-    // Tiefe: jede Akte kommt etwas größer herein und zieht sich bis zur Endposition auf ihr Maß zurück
-    folders.forEach(function (f, i) {
-      var st = parseFloat(getComputedStyle(f).top) || 0, t = f.getBoundingClientRect().top;
-      var k = sm(f, 's', clamp((t - st) / (window.innerHeight * .7), 0, 1));
-      f.style.transform = 'scale(' + (1 + .03 * k).toFixed(4) + ')';
-    });
+
   });
 
   /* Kathedrale: Punkt auf der Schiene */
@@ -286,7 +284,7 @@
   var arena = $('#arena');
   if (arena && !RM) {
     var rocks = $$('.rock', arena), statue = $('.statue', arena), band = $('.band-txt', arena), mx = 0, my = 0, cx = 0, cy = 0, run = false;
-    function place() { var a = arena.getBoundingClientRect(), st = statue.getBoundingClientRect(), sh = st.height || a.height * .8, cxs = st.left - a.left + st.width / 2, top = st.top - a.top; rocks.forEach(function (r) { r.style.width = (sh * parseFloat(r.dataset.w)) + 'px'; r.dataset.bx = cxs + parseFloat(r.dataset.x) * sh; r.dataset.by = top + parseFloat(r.dataset.y) * sh; }); }
+    function place() { var a = arena.getBoundingClientRect(), st = statue.getBoundingClientRect(), sh = st.height || a.height * .8, cxs = st.left - a.left + st.width / 2, top = st.top - a.top; var k = Math.min(1, (a.width / 2 - 8) / (.92 * sh)); /* schmale Bildschirme: Felsen enger um Herkules, damit alle sichtbar bleiben */ rocks.forEach(function (r) { r.style.width = (sh * parseFloat(r.dataset.w) * Math.max(k, .62)) + 'px'; r.dataset.bx = cxs + parseFloat(r.dataset.x) * sh * k; r.dataset.by = top + parseFloat(r.dataset.y) * sh; }); }
     statue.addEventListener('load', place);
     place(); window.addEventListener('resize', place);
     arena.addEventListener('pointermove', function (e) { var r = arena.getBoundingClientRect(); mx = (e.clientX - r.left) / r.width - .5; my = (e.clientY - r.top) / r.height - .5; if (!run) { run = true; requestAnimationFrame(loop); } });
