@@ -376,7 +376,7 @@ body.over .nav:not(.solid) .brand .dark,body.darkhead .nav:not(.solid) .brand .d
 
 /* Personen */
 .leaders{display:grid;grid-template-columns:repeat(2,minmax(0,340px));justify-content:center;gap:clamp(20px,4vw,50px);margin:50px 0}
-.people{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:clamp(16px,2.4vw,28px);margin-top:40px}
+.people{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(16px,2.6vw,36px) clamp(14px,2.4vw,32px);margin-top:40px}
 .person{margin:0}
 .person .ph{all:unset;display:block;aspect-ratio:3/4;border-radius:24px;overflow:hidden;background:linear-gradient(160deg,#E9EDF2,#C9D2DC)}
 .person .ph img{width:100%;height:100%;object-fit:cover;object-position:50% 15%;transition:transform 1s var(--ease),filter .6s;filter:grayscale(.15)}
@@ -385,7 +385,9 @@ body.over .nav:not(.solid) .brand .dark,body.darkhead .nav:not(.solid) .brand .d
 .person b{font:700 17px/1.3 var(--f);text-transform:uppercase;letter-spacing:.04em}
 .person span{font:500 12px var(--f);letter-spacing:.14em;text-transform:uppercase;color:var(--sky2)}
 .person.big b{font-size:20px}
-@media (max-width:560px){.leaders{grid-template-columns:1fr 1fr;gap:14px}.people{grid-template-columns:1fr 1fr;gap:14px}.person b{font-size:14px}.person span{font-size:10.5px;letter-spacing:.08em}}
+.people .person b{font-size:19px}
+.people .person figcaption{padding-bottom:10px}
+@media (max-width:560px){.leaders{grid-template-columns:1fr 1fr;gap:14px}.people{grid-template-columns:1fr 1fr;gap:14px}.person b,.people .person b{font-size:14px}.person span{font-size:10.5px;letter-spacing:.08em}}
 
 /* Leistungsseiten */
 .pillars{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
