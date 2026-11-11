@@ -32,16 +32,17 @@
   /* Runter scrollen blendet die Leiste aus, erst echtes Hochscrollen holt sie zurueck.
      Kleine Ruckler (iOS-Nachfedern, Adressleiste, nachladende Bilder) zaehlen nicht. */
   var nav = $('#nav'), lastY = 0, navRun = 0;
+  function navSet(c, on) { if (nav.classList.contains(c) !== on) nav.classList.toggle(c, on); }
   function onNav() {
     var max = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
     var y = Math.min(Math.max(window.scrollY, 0), max), d = y - lastY;
-    nav.classList.toggle('solid', y > 40);
-    if (y <= nav.offsetHeight || document.body.classList.contains('menu-open')) { nav.classList.remove('hide'); navRun = 0; }
+    navSet('solid', y > 40);
+    if (y <= 90 || document.body.classList.contains('menu-open')) { navSet('hide', false); navRun = 0; }
     else if (d !== 0) {
       if ((d > 0) !== (navRun > 0)) navRun = 0;
       navRun += d;
-      if (navRun > 12) nav.classList.add('hide');
-      else if (navRun < -40) nav.classList.remove('hide');
+      if (navRun > 12) navSet('hide', true);
+      else if (navRun < -40) navSet('hide', false);
     }
     lastY = y;
   }
@@ -64,7 +65,7 @@
     if (k === tintKey) return; tintKey = k;
     var lum = (.2126 * c[0] + .7152 * c[1] + .0722 * c[2]) / 255;
     nav.style.setProperty('--navbg', 'rgba(' + k + ',.9)');
-    nav.classList.toggle('tdark', lum < .5);
+    navSet('tdark', lum < .5);
   }
   var _onNav = onNav; onNav = function () { _onNav(); tint(); };
   window.addEventListener('resize', function () { tintKey = ''; tint(); });
@@ -146,6 +147,8 @@
   /* Hero */
   var hero = $('#hero');
   if (hero) {
+    if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { es.forEach(function (e) { hero.classList.toggle('live', e.isIntersecting); }); }, { rootMargin: '300px 0px' }).observe(hero);
+    else hero.classList.add('live');
     var h1 = $('#heroTitle');
     if (h1 && !RM) {
       var i = 0, tw = document.createTreeWalker(h1, NodeFilter.SHOW_TEXT), nodes = [];
@@ -205,7 +208,7 @@
         css += '@keyframes flCard' + ci + '{';
         for (i = 0; i <= 100; i++) { var v = cardAt(ci, i / 100); css += i + '%{opacity:' + v[0].toFixed(3) + ';transform:translate(-50%,' + v[1].toFixed(1) + 'px) scale(' + (.94 + v[0] * .06).toFixed(4) + ')}'; }
         css += '}';
-        css += 'html.sda #stage .mcard[data-fi="' + ci + '"]{animation:flCard' + ci + ' linear both;animation-timeline:--flight;animation-range:contain 0% contain 100%}';
+        css += 'html.sda #flight.live #stage .mcard[data-fi="' + ci + '"]{animation:flCard' + ci + ' linear both;animation-timeline:--flight;animation-range:contain 0% contain 100%}';
       });
       if (!kfEl) { kfEl = document.createElement('style'); kfEl.id = 'flightKF'; document.head.appendChild(kfEl); }
       kfEl.textContent = css;
@@ -213,15 +216,18 @@
       cards.forEach(function (c) { c.style.opacity = c.style.transform = ''; });
     }
     size(); buildKF();
+    if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { es.forEach(function (e) { flight.classList.toggle('live', e.isIntersecting); }); }, { rootMargin: '300px 0px' }).observe(flight);
+    else flight.classList.add('live');
     var kfT; window.addEventListener('resize', function () { size(); clearTimeout(kfT); kfT = setTimeout(buildKF, 120); req(); });
     tasks.push(function (vh) {
       var r = flight.getBoundingClientRect(), tot = r.height - vh;
       if (r.bottom < 0 || r.top > vh) return;
       if (SDA) {
         var pq = clamp(-r.top / tot, 0, 1), dq = Math.round(pq * 90);
+        var fq = pq.toFixed(4); if (fq === fill._v) return; fill._v = fq;
         return function () {
           if (now.textContent !== String(dq)) now.textContent = dq;
-          fill.style.transform = 'scaleX(' + pq.toFixed(4) + ')';
+          fill.style.transform = 'scaleX(' + fq + ')';
           [0, 30, 45, 90].forEach(function (d, i) { marks[i].classList.toggle('on', dq >= d); });
         };
       }
@@ -253,16 +259,6 @@
   });
 
   /* Der komplette Aufbau: Karten kippen von unten hoch und stapeln sich */
-  var bcards = $$('.bcard');
-  if (bcards.length && !RM && !SDA) tasks.push(function (vh) {
-    bcards.forEach(function (c, i) {
-      var r = c.getBoundingClientRect(), k = sm(c, 'k', clamp((vh - r.top) / (vh * .55), 0, 1)), nx = bcards[i + 1], kn = 0;
-      if (nx) { var rn = nx.getBoundingClientRect(); kn = clamp((vh - rn.top) / (vh * .55), 0, 1); }
-      var inner = c.firstElementChild;
-      inner.style.transform = 'perspective(1600px) rotateX(' + (-(1 - k) * 30).toFixed(3) + 'deg) scale(' + (1 + (1 - k) * .05).toFixed(4) + ')'; // kommt unten vorne herein und legt sich nach hinten
-    });
-  });
-
   /* Aussage: Wörter füllen sich beim Scrollen */
   var stmt = $('#stmt');
   if (stmt) {
@@ -284,26 +280,10 @@
   }
 
   /* Akten stapeln */
-  var folders = $$('.folder');
-  var dims = folders.map(function (f) {
-    var sh = f.querySelector('.sheet'), dm = document.createElement('i'); dm.className = 'dim'; dm.setAttribute('aria-hidden', 'true'); sh && sh.appendChild(dm); return dm;
-  });
-  var foldersBox = folders.length ? folders[0].parentNode : null;
-  if (!RM && folders.length && window.innerWidth > 860) tasks.push(function (vh) {
-    var box = foldersBox.getBoundingClientRect(); if (box.bottom < -50 || box.top > vh + 50) return;
-    var rs = folders.map(function (f) { return f.getBoundingClientRect(); }), vals = [];
-    folders.forEach(function (f, i) {
-      if (!folders[i + 1]) return;
-      var k = sm(f, 'd', clamp(1 - (rs[i + 1].top - rs[i].top) / (rs[i].height * .9), 0, 1));
-      vals[i] = (k * .25).toFixed(3);
-    });
-    return function () { vals.forEach(function (v, i) { if (dims[i]._v !== v) { dims[i]._v = v; dims[i].style.opacity = v; } }); };
-  });
-
   /* Kathedrale: Punkt auf der Schiene */
   var rail = $('#rail'), dot = $('#dot');
   if (rail && dot) tasks.push(function (vh) {
-    var r = rail.getBoundingClientRect(); var p = sm(dot, 'p', clamp((vh * .55 - r.top) / r.height, 0, 1)); return function () { dot.style.transform = 'translate3d(0,' + (p * r.height).toFixed(1) + 'px,0)'; };
+    var r = rail.getBoundingClientRect(); var p = sm(dot, 'p', clamp((vh * .55 - r.top) / r.height, 0, 1)); var v = (p * r.height).toFixed(1); if (v === dot._v) return; dot._v = v; return function () { dot.style.transform = 'translate3d(0,' + v + 'px,0)'; };
   });
 
   /* Deshalb wir */
