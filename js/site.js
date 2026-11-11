@@ -29,12 +29,20 @@
   var fitT; window.addEventListener('resize', function () { clearTimeout(fitT); fitT = setTimeout(fitHeads, 150); });
 
   /* ---------- Kopfleiste ---------- */
-  var nav = $('#nav'), lastY = 0;
+  /* Runter scrollen blendet die Leiste aus, erst echtes Hochscrollen holt sie zurueck.
+     Kleine Ruckler (iOS-Nachfedern, Adressleiste, nachladende Bilder) zaehlen nicht. */
+  var nav = $('#nav'), lastY = 0, run = 0;
   function onNav() {
-    var y = window.scrollY;
+    var max = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+    var y = Math.min(Math.max(window.scrollY, 0), max), d = y - lastY;
     nav.classList.toggle('solid', y > 40);
-    nav.classList.toggle('hide', y > 500 && y > lastY + 4 && !document.body.classList.contains('menu-open'));
-    if (y < lastY - 4 || y < 500) nav.classList.remove('hide');
+    if (y <= nav.offsetHeight || document.body.classList.contains('menu-open')) { nav.classList.remove('hide'); run = 0; }
+    else if (d !== 0) {
+      if ((d > 0) !== (run > 0)) run = 0;
+      run += d;
+      if (run > 12) nav.classList.add('hide');
+      else if (run < -40) nav.classList.remove('hide');
+    }
     lastY = y;
   }
   if (document.querySelector('.ph.dark, .soon')) document.body.classList.add('darkhead');
@@ -60,6 +68,7 @@
   var _onNav = onNav; onNav = function () { _onNav(); tint(); };
   window.addEventListener('resize', function () { tintKey = ''; tint(); });
   window.addEventListener('scroll', onNav, { passive: true }); onNav();
+  nav.addEventListener('focusin', function () { nav.classList.remove('hide'); run = 0; });
   var burger = $('#burger');
   burger && burger.addEventListener('click', function () {
     var o = document.body.classList.toggle('menu-open');
