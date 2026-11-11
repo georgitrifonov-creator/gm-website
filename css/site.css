@@ -1415,3 +1415,6 @@ html{scroll-behavior:auto}
   .flight,.build-sec,.cases{overflow-x:visible}
 }
 .offscr,.offscr *,.offscr *::before,.offscr *::after{animation-play-state:paused!important}
+
+/* ---------- Runde 29: Flugzeug im GM-Services-Design (lang und schmal, Mitte bleibt auf der Flugbahn) ---------- */
+.strip .plane{width:480px;height:160px;margin:95px 0 0 -80px;object-fit:contain}
