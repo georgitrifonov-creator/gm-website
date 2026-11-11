@@ -1513,7 +1513,7 @@ html{scroll-behavior:auto}
 .film-cue::after{content:"";position:absolute;left:50%;bottom:0;width:1px;height:26px;background:rgba(255,255,255,.7);transform-origin:top;animation:gateCue 1.8s var(--ease) infinite}
 html.sda .ph.film .ph-img video{animation:phPar linear both;animation-timeline:scroll(root);animation-range:0px 1300px}
 @media (max-width:760px){.ph.film{min-height:86svh}.film-cue{display:none}}
-/* ---------- Runde 39: Team-Video warm getoent (stehende Kamera, ziehende Wolken) ---------- */
-.ph.film .ph-img video{filter:sepia(.5) saturate(1.7) hue-rotate(-10deg) brightness(.88) contrast(1.08)}
-.ph.film .ph-img::after{content:"";position:absolute;inset:0;background:linear-gradient(200deg,rgba(255,176,92,.34),rgba(214,120,60,.16) 55%,rgba(60,28,10,.2));mix-blend-mode:soft-light;pointer-events:none}
-.ph.film::after{background:linear-gradient(90deg,rgba(16,10,5,.8),rgba(16,10,5,.3) 60%,rgba(16,10,5,.12)),linear-gradient(0deg,rgba(16,10,5,.75),transparent 45%),linear-gradient(180deg,rgba(16,10,5,.45),transparent 22%)}
+/* ---------- Runde 40: Team-Video dunkel und fast farblos mit leicht warmem Grau (wie bisherige Seite), naeher herangeholt (Firmenlogo oben rechts ausserhalb) ---------- */
+.ph.film .ph-img{overflow:hidden}
+.ph.film .ph-img video{inset:auto auto 0 0;width:150%;height:150%;filter:saturate(.22) sepia(.32) brightness(.6) contrast(1.12)}
+.ph.film::after{background:linear-gradient(90deg,rgba(12,11,9,.72),rgba(12,11,9,.3) 60%,rgba(12,11,9,.2)),linear-gradient(0deg,rgba(12,11,9,.7),transparent 45%),linear-gradient(180deg,rgba(12,11,9,.45),transparent 22%)}
