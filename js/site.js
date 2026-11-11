@@ -46,7 +46,7 @@
     }
     lastY = y;
   }
-  if (document.querySelector('.ph.dark, .soon')) document.body.classList.add('darkhead');
+  if (document.querySelector('.ph.dark, .soon, .gate')) document.body.classList.add('darkhead');
   /* Kopfleiste nimmt die Farbe der Section dahinter an (Handy und PC) */
   function bgOf(el) {
     for (; el && el.nodeType === 1; el = el.parentElement) {
@@ -277,6 +277,34 @@
       var p = clamp((vh * .85 - r.top) / (r.height + vh * .35), 0, 1), n = Math.round(p * sws.length * 1.08);
       if (n === stmt._n) return; stmt._n = n;
       return function () { sws.forEach(function (x, i) { x.classList.toggle('on', i < n); }); };
+    });
+  }
+
+  /* Runde 34: Ueber uns. Beim Scrollen geht man durch den Bogen ins Schwarze, dann kommen die Zahlen */
+  var gate = $('#gate');
+  if (gate && !RM) {
+    gate.classList.add('gate-on');
+    var gI = $('.gate-img img', gate), gSh = $('.gate-shade', gate), gBl = $('.gate-black', gate), gH = $('.gate-head', gate), gSt = $('.gate-stats', gate), gCu = $('.gate-cue', gate), gCnt = false;
+    tasks.push(function (vh) {
+      var r = gate.getBoundingClientRect(); if (r.bottom < -50 || r.top > vh + 50) return;
+      var p = clamp(-r.top / Math.max(1, r.height - vh), 0, 1), k = p.toFixed(4); if (k === gate._k) return; gate._k = k;
+      var W = window.innerWidth, wide = W > 860;
+      var a = clamp(p / .26, 0, 1); a = a * a * (3 - 2 * a);
+      var z = clamp((p - .16) / .5, 0, 1), zz = z * z * (3 - 2 * z);
+      var sc = Math.exp(zz * Math.log(11)), ih = gI.offsetHeight || vh;
+      var x = (wide ? W * .2 : 0) * (1 - a), y = -.115 * ih * zz;
+      var bl = clamp((p - .46) / .2, 0, 1), s = clamp((p - .7) / .16, 0, 1);
+      if (s > .15 && !gCnt) { gCnt = true; $$('[data-to]', gSt).forEach(countUp); }
+      return function () {
+        gI.style.transform = 'translate3d(calc(-50% + ' + x.toFixed(1) + 'px),calc(-50% + ' + y.toFixed(1) + 'px),0) scale(' + sc.toFixed(4) + ')';
+        gSh.style.opacity = (1 - a).toFixed(3);
+        gBl.style.opacity = bl.toFixed(3);
+        gH.style.opacity = (1 - a).toFixed(3);
+        gH.style.transform = 'translate3d(' + (-a * W * .28).toFixed(1) + 'px,0,0)';
+        gSt.style.opacity = s.toFixed(3);
+        gSt.style.transform = 'translate3d(0,' + ((1 - s) * 36).toFixed(1) + 'px,0)';
+        gCu.style.opacity = (1 - clamp(p / .04, 0, 1)).toFixed(2);
+      };
     });
   }
 
