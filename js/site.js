@@ -113,9 +113,22 @@
   }
 
   /* ---------- Scroll-Effekte ---------- */
+  /* Safari meldet Scroll-Schritte unregelmaessig. Werte springen deshalb nicht direkt,
+     sondern gleiten in wenigen Frames zum Ziel (sm). Das nimmt das Zittern. */
   var tasks = [];
-  var ticking = false;
-  function frame() { ticking = false; var vh = window.innerHeight; tasks.forEach(function (f) { f(vh); }); }
+  var ticking = false, moving = false, lastT = 0, A = .25;
+  function sm(o, key, target) {
+    var m = o._sm || (o._sm = {}), c = m[key];
+    if (c === undefined || Math.abs(target - c) < .0005) { m[key] = target; return target; }
+    c += (target - c) * A; m[key] = c; moving = true; return c;
+  }
+  function frame(t) {
+    ticking = false; moving = false;
+    var dt = lastT ? Math.min(64, t - lastT) : 16.7; lastT = t;
+    A = 1 - Math.pow(.78, dt / 16.7);
+    var vh = window.innerHeight; tasks.forEach(function (f) { f(vh); });
+    if (moving) req(); else lastT = 0;
+  }
   function req() { if (!ticking) { ticking = true; requestAnimationFrame(frame); } }
   window.addEventListener('scroll', req, { passive: true }); window.addEventListener('resize', req);
 
@@ -125,7 +138,7 @@
     tasks.push(function (vh) { var r = el.parentNode.getBoundingClientRect(); if (r.bottom < -100 || r.top > vh + 100) return; el.style.transform = 'translate3d(0,' + ((r.top + r.height / 2 - vh / 2) * -k).toFixed(1) + 'px,0)'; });
   });
   if (!RM) $$('.ph-img img').forEach(function (el) {
-    tasks.push(function () { var y = window.scrollY; if (y > 1200) return; el.style.transform = 'translate3d(0,' + (y * .22).toFixed(1) + 'px,0) scale(1.06)'; });
+    tasks.push(function () { var y = sm(el, 'y', Math.min(window.scrollY, 1300)); el.style.transform = 'translate3d(0,' + (y * .22).toFixed(2) + 'px,0) scale(1.06)'; });
   });
 
   /* Hero */
@@ -147,7 +160,7 @@
     var vid = $('#heroVid'), copy = $('#heroCopy');
     if (vid) { vid.addEventListener('playing', function () { $('.hero .poster').style.opacity = 0; }); }
     if (!RM) tasks.push(function (vh) {
-      var y = window.scrollY; if (y > vh * 1.2) return;
+      var y = sm(hero, 'y', Math.min(window.scrollY, vh * 1.3)); if (y > vh * 1.25 && window.scrollY > vh * 1.3) return;
       var p = y / vh;
       if (vid) vid.style.transform = 'scale(' + (1 + p * .12) + ')';
       copy.style.transform = 'translate3d(0,' + (y * .35) + 'px,0)'; copy.style.opacity = 1 - p * 1.3;
@@ -170,7 +183,7 @@
     tasks.push(function (vh) {
       var r = flight.getBoundingClientRect(), tot = r.height - vh;
       if (r.bottom < 0 || r.top > vh) return;
-      var p = clamp(-r.top / tot, 0, 1);
+      var p = sm(flight, 'p', clamp(-r.top / tot, 0, 1));
       var tx = -(3600 * U - W) * p;
       strip.style.transform = 'translate3d(' + tx + 'px,0,0) scale(' + U + ')';
       var a = path(p), b = path(Math.min(1, p + .01)), ang = Math.atan2(b[1] - a[1], b[0] - a[0]) * .5;
@@ -201,10 +214,10 @@
   var bcards = $$('.bcard');
   if (bcards.length && !RM) tasks.push(function (vh) {
     bcards.forEach(function (c, i) {
-      var r = c.getBoundingClientRect(), k = clamp((vh - r.top) / (vh * .55), 0, 1), nx = bcards[i + 1], kn = 0;
+      var r = c.getBoundingClientRect(), k = sm(c, 'k', clamp((vh - r.top) / (vh * .55), 0, 1)), nx = bcards[i + 1], kn = 0;
       if (nx) { var rn = nx.getBoundingClientRect(); kn = clamp((vh - rn.top) / (vh * .55), 0, 1); }
       var inner = c.firstElementChild;
-      inner.style.transform = 'perspective(1600px) rotateX(' + (-(1 - k) * 30) + 'deg) scale(' + (1 + (1 - k) * .05) + ')'; // kommt unten vorne herein und legt sich nach hinten
+      inner.style.transform = 'perspective(1600px) rotateX(' + (-(1 - k) * 30).toFixed(3) + 'deg) scale(' + (1 + (1 - k) * .05).toFixed(4) + ')'; // kommt unten vorne herein und legt sich nach hinten
     });
   });
 
@@ -232,21 +245,23 @@
     folders.forEach(function (f, i) {
       var nx = folders[i + 1]; if (!nx) return;
       var a = f.getBoundingClientRect(), b = nx.getBoundingClientRect();
-      var k = clamp(1 - (b.top - a.top) / (a.height * .9), 0, 1);
-      f.querySelector('.sheet').style.filter = 'brightness(' + (1 - k * .25) + ')';
+      var k = sm(f, 'd', clamp(1 - (b.top - a.top) / (a.height * .9), 0, 1));
+      var sh = f.querySelector('.sheet'), dm = sh.querySelector('.dim');
+      if (!dm) { dm = document.createElement('i'); dm.className = 'dim'; dm.setAttribute('aria-hidden', 'true'); sh.appendChild(dm); }
+      dm.style.opacity = (k * .25).toFixed(3);
     });
     // Tiefe: jede Akte kommt etwas größer herein und zieht sich bis zur Endposition auf ihr Maß zurück
     folders.forEach(function (f, i) {
       var st = parseFloat(getComputedStyle(f).top) || 0, t = f.getBoundingClientRect().top;
-      var k = clamp((t - st) / (window.innerHeight * .7), 0, 1);
-      f.style.transform = 'scale(' + (1 + .03 * k) + ')';
+      var k = sm(f, 's', clamp((t - st) / (window.innerHeight * .7), 0, 1));
+      f.style.transform = 'scale(' + (1 + .03 * k).toFixed(4) + ')';
     });
   });
 
   /* Kathedrale: Punkt auf der Schiene */
   var rail = $('#rail'), dot = $('#dot');
   if (rail && dot) tasks.push(function (vh) {
-    var r = rail.getBoundingClientRect(); var p = clamp((vh * .55 - r.top) / r.height, 0, 1); dot.style.top = (p * 100) + '%';
+    var r = rail.getBoundingClientRect(); var p = sm(dot, 'p', clamp((vh * .55 - r.top) / r.height, 0, 1)); dot.style.transform = 'translate3d(0,' + (p * r.height).toFixed(1) + 'px,0)';
   });
 
   /* Deshalb wir */
