@@ -280,32 +280,113 @@
     });
   }
 
-  /* Runde 34: Ueber uns. Beim Scrollen geht man durch den Bogen ins Schwarze, dann kommen die Zahlen */
+  /* Runde 35: Ueber uns. Echter 3D-Saeulengang, gezeichnet (bleibt in jeder Tiefe scharf).
+     Start ist das Foto mit der Statue, beim Scrollen uebernimmt der gezeichnete Gang, am Ende geht es durch das Tor ins Dunkle, dann die Zahlen */
   var gate = $('#gate');
-  if (gate && !RM) {
+  if (gate && !RM && $('.gate-cv', gate) && $('.gate-cv', gate).getContext) {
     gate.classList.add('gate-on');
-    var gI = $('.gate-img img', gate), gSh = $('.gate-shade', gate), gBl = $('.gate-black', gate), gH = $('.gate-head', gate), gSt = $('.gate-stats', gate), gCu = $('.gate-cue', gate), gCnt = false;
+    var gI = $('.gate-img img', gate), gCv = $('.gate-cv', gate), gSh = $('.gate-shade', gate), gBl = $('.gate-black', gate), gHd = $('.gate-head', gate), gSt = $('.gate-stats', gate), gCu = $('.gate-cue', gate), gCnt = false;
+    var gx = gCv.getContext('2d'), gW = 0, gHt = 0, gD = 1, gP = 0, gMx = 0, gMy = 0, gTx = 0, gTy = 0, gRaf = 0, gVis = false;
+    var GF = 1, GD = .64, GN = 16, GZE = 7.2, GFOG = [9, 22, 38], GNIGHT = '#03080F';
+    var gSm = function (t) { t = clamp(t, 0, 1); return t * t * (3 - 2 * t); };
+    var gCol = function (v, f) { var c = 215 * v; return 'rgb(' + ((c + (GFOG[0] - c) * f) | 0) + ',' + ((c + (GFOG[1] - c) * f) | 0) + ',' + ((c * .995 + (GFOG[2] - c * .995) * f) | 0) + ')'; };
+    var gState = function () {
+      var W = gW, H = gHt, p = gP, iw = Math.max(W, H * 1.6442), ih = iw / 1.6442;
+      var a = gSm(p / .22), q = clamp((p - .12) / .56, 0, 1); q = q * q * q * (q * (q * 6 - 15) + 10);
+      var e = -GF + q * (GZE + GF), ph = 1 - gSm((p - .13) / .09);
+      return { W: W, H: H, k: iw / 1266, a: a, e: e, ph: ph,
+        vx: W / 2 + (W > 860 ? W * .2 : 0) * (1 - a), vy: H / 2 + (470 / 770 - .5) * ih * (1 - gSm(q * 2.4)), y0: H / 2 + (470 / 770 - .5) * ih };
+    };
+    var gDraw = function (st) {
+      var W = st.W, H = st.H, k = st.k, e = st.e, vx = st.vx, vy = st.vy, c = gx, w = 1 - st.ph;
+      var ox = gMx * 46 * w, oy = gMy * 22 * w;
+      c.setTransform(gD, 0, 0, gD, 0, 0);
+      var g = c.createRadialGradient(vx, vy, 0, vx, vy, Math.max(W, H) * .8);
+      g.addColorStop(0, '#1B4A70'); g.addColorStop(.35, '#0A1D30'); g.addColorStop(1, GNIGHT);
+      c.fillStyle = g; c.fillRect(0, 0, W, H);
+      var fog = function (d) { return clamp(1 - Math.exp(-(d - 1) * .36), 0, .985); };
+      var d, s, f, cx, cy, i;
+      /* Boden: Platten von hinten nach vorn */
+      var ds = GD / 2, m0 = Math.max(0, Math.floor((e + .6) / ds)), a0 = Math.max(0, Math.ceil((e + .05) / GD));
+      for (i = m0 + GN * 2; i >= m0; i--) {
+        var z1 = -.6 + i * ds, z2 = z1 + ds; if (z2 - e < .03) continue;
+        var d1 = Math.max(z1 - e, .03), d2 = z2 - e, s1 = GF / d1 * k, s2 = GF / d2 * k;
+        c.fillStyle = gCol(i % 2 ? .66 : .72, fog((d1 + d2) / 2));
+        c.beginPath();
+        c.moveTo(vx + (-252 - ox) * s1, vy + (275 - oy) * s1); c.lineTo(vx + (252 - ox) * s1, vy + (275 - oy) * s1);
+        c.lineTo(vx + (252 - ox) * s2, vy + (275 - oy) * s2); c.lineTo(vx + (-252 - ox) * s2, vy + (275 - oy) * s2); c.closePath(); c.fill();
+      }
+      /* Boegen von hinten nach vorn */
+      for (i = a0 + GN; i >= a0; i--) {
+        d = i * GD - e; if (d < .05) continue;
+        s = GF / d * k; f = fog(d); cx = vx - ox * s; cy = vy - oy * s;
+        var near = clamp((d - .05) / .2, 0, 1); c.globalAlpha = near;
+        /* Rueckseite des Bogens: gibt Tiefe */
+        var sb = GF / (d + .1) * k, bx = vx - ox * sb, by = vy - oy * sb;
+        c.fillStyle = gCol(.56, fog(d + .1));
+        c.beginPath(); c.arc(bx, by - 202 * sb, 208 * sb, Math.PI, 2 * Math.PI); c.arc(bx, by - 202 * sb, 165 * sb, 2 * Math.PI, Math.PI, true); c.closePath(); c.fill();
+        for (var sd = -1; sd <= 1; sd += 2) {
+          var xc = cx + sd * 190 * s;
+          if (xc + 60 * s < 0 || xc - 60 * s > W) continue;
+          c.fillStyle = gCol(.8, f); c.fillRect(xc - 52 * s, cy + 202 * s, 104 * s, 73 * s);
+          c.fillStyle = gCol(.93, f); c.fillRect(xc - 52 * s, cy + 202 * s, 104 * s, 5 * s);
+          c.fillStyle = gCol(.88, f); c.fillRect(xc - 44 * s, cy + 180 * s, 88 * s, 22 * s);
+          c.fillStyle = gCol(.74, f); c.fillRect(xc - 35 * s, cy + 160 * s, 70 * s, 20 * s);
+          g = c.createLinearGradient(xc - 25 * s, 0, xc + 25 * s, 0);
+          g.addColorStop(0, gCol(.6, f)); g.addColorStop(.3, gCol(1, f)); g.addColorStop(.66, gCol(.88, f)); g.addColorStop(1, gCol(.55, f));
+          c.fillStyle = g; c.fillRect(xc - 25 * s, cy - 172 * s, 50 * s, 333 * s);
+          c.strokeStyle = 'rgba(20,30,44,' + (.2 * (1 - f)).toFixed(3) + ')'; c.lineWidth = Math.max(.6, s * .9);
+          c.beginPath(); for (var jn = 1; jn < 5; jn++) { var yj = cy + (-170 + jn * 66) * s; c.moveTo(xc - 25 * s, yj); c.lineTo(xc + 25 * s, yj); } c.stroke();
+          c.fillStyle = gCol(.84, f); c.beginPath(); c.moveTo(xc - 25 * s, cy - 170 * s); c.lineTo(xc - 40 * s, cy - 198 * s); c.lineTo(xc + 40 * s, cy - 198 * s); c.lineTo(xc + 25 * s, cy - 170 * s); c.closePath(); c.fill();
+          c.fillStyle = gCol(.98, f); c.fillRect(xc - 43 * s, cy - 213 * s, 86 * s, 15 * s);
+        }
+        var ry = cy - 202 * s;
+        g = c.createLinearGradient(0, ry - 208 * s, 0, ry);
+        g.addColorStop(0, gCol(1, f)); g.addColorStop(1, gCol(.8, f));
+        c.fillStyle = g; c.beginPath(); c.arc(cx, ry, 208 * s, Math.PI, 2 * Math.PI); c.arc(cx, ry, 165 * s, 2 * Math.PI, Math.PI, true); c.closePath(); c.fill();
+        c.strokeStyle = 'rgba(20,30,44,' + (.2 * (1 - f)).toFixed(3) + ')'; c.lineWidth = Math.max(.6, s * .9);
+        c.beginPath(); for (var an = 1; an < 12; an++) { var t = Math.PI + an * Math.PI / 12, co = Math.cos(t), si = Math.sin(t); c.moveTo(cx + co * 165 * s, ry + si * 165 * s); c.lineTo(cx + co * 208 * s, ry + si * 208 * s); } c.stroke();
+        c.globalAlpha = 1;
+      }
+    };
+    var gPaint = function () {
+      var st = gState();
+      if (st.ph < 1) gDraw(st);
+      gI.style.opacity = st.ph.toFixed(3); gI.style.visibility = st.ph > 0 ? 'visible' : 'hidden';
+      if (st.ph > 0) gI.style.transform = 'translate3d(calc(-50% + ' + (st.vx - st.W / 2).toFixed(1) + 'px),calc(-50% + ' + (st.vy - st.y0).toFixed(1) + 'px),0) scale(' + (GF / Math.max(.2, -st.e)).toFixed(4) + ')';
+      return st;
+    };
     tasks.push(function (vh) {
-      var r = gate.getBoundingClientRect(); if (r.bottom < -50 || r.top > vh + 50) return;
-      var p = clamp(-r.top / Math.max(1, r.height - vh), 0, 1), k = p.toFixed(4); if (k === gate._k) return; gate._k = k;
-      var W = window.innerWidth, wide = W > 860;
-      var a = clamp(p / .26, 0, 1); a = a * a * (3 - 2 * a);
-      var z = clamp((p - .16) / .5, 0, 1), zz = z * z * (3 - 2 * z);
-      var sc = Math.exp(zz * Math.log(11)), ih = gI.offsetHeight || vh;
-      var x = (wide ? W * .2 : 0) * (1 - a), y = -.115 * ih * zz;
-      var bl = clamp((p - .46) / .2, 0, 1), s = clamp((p - .7) / .16, 0, 1);
-      if (s > .15 && !gCnt) { gCnt = true; $$('[data-to]', gSt).forEach(countUp); }
+      var r = gate.getBoundingClientRect(); gVis = !(r.bottom < -50 || r.top > vh + 50); if (!gVis) return;
+      var box = gCv.parentNode, W = box.clientWidth, H = box.clientHeight, dp = Math.min(window.devicePixelRatio || 1, 2);
+      var p = clamp(-r.top / Math.max(1, r.height - vh), 0, 1), key = p.toFixed(4) + '|' + W + '|' + H; if (key === gate._k) return; gate._k = key;
+      gP = p;
+      var bl = clamp((p - .63) / .08, 0, 1), sI = clamp((p - .73) / .15, 0, 1);
+      if (sI > .15 && !gCnt) { gCnt = true; $$('[data-to]', gSt).forEach(countUp); }
       return function () {
-        gI.style.transform = 'translate3d(calc(-50% + ' + x.toFixed(1) + 'px),calc(-50% + ' + y.toFixed(1) + 'px),0) scale(' + sc.toFixed(4) + ')';
-        gSh.style.opacity = (1 - a).toFixed(3);
+        if (W !== gW || H !== gHt || dp !== gD) { gW = W; gHt = H; gD = dp; gCv.width = Math.round(W * dp); gCv.height = Math.round(H * dp); }
+        var st = gPaint();
+        gSh.style.opacity = (1 - st.a).toFixed(3);
         gBl.style.opacity = bl.toFixed(3);
-        gH.style.opacity = (1 - a).toFixed(3);
-        gH.style.transform = 'translate3d(' + (-a * W * .28).toFixed(1) + 'px,0,0)';
-        gSt.style.opacity = s.toFixed(3);
-        gSt.style.transform = 'translate3d(0,' + ((1 - s) * 36).toFixed(1) + 'px,0)';
+        gHd.style.opacity = (1 - st.a).toFixed(3);
+        gHd.style.transform = 'translate3d(' + (-st.a * W * .28).toFixed(1) + 'px,0,0)';
+        gSt.style.opacity = sI.toFixed(3);
+        gSt.style.transform = 'translate3d(0,' + ((1 - sI) * 36).toFixed(1) + 'px,0)';
         gCu.style.opacity = (1 - clamp(p / .04, 0, 1)).toFixed(2);
       };
     });
+    /* Maus: die Kamera schwenkt leicht mit, dadurch verschieben sich die Saeulen gegeneinander */
+    if (window.matchMedia && window.matchMedia('(hover:hover) and (pointer:fine)').matches) {
+      var gLoop = function () {
+        gMx += (gTx - gMx) * .08; gMy += (gTy - gMy) * .08;
+        if (gVis && gW) gPaint();
+        gRaf = (Math.abs(gTx - gMx) + Math.abs(gTy - gMy) > .002) ? requestAnimationFrame(gLoop) : 0;
+      };
+      gate.addEventListener('pointermove', function (ev) {
+        gTx = clamp(ev.clientX / window.innerWidth * 2 - 1, -1, 1); gTy = clamp(ev.clientY / window.innerHeight * 2 - 1, -1, 1);
+        if (!gRaf) gRaf = requestAnimationFrame(gLoop);
+      });
+    }
   }
 
   /* Akten stapeln */
