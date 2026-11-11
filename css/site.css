@@ -1503,3 +1503,13 @@ html{scroll-behavior:auto}
 .arch-soft>i{position:absolute;inset:-46px -46px -6px;padding:46px 46px 0;pointer-events:none;-webkit-mask-image:linear-gradient(#000 0,#000 46%,transparent 94%);mask-image:linear-gradient(#000 0,#000 46%,transparent 94%)}
 .arch-soft>i>b{display:block;height:100%;border-radius:55px 55px 0 0;border:4px solid #fff;border-bottom:0;box-shadow:0 -6px 30px rgba(83,206,251,.7),inset 0 6px 30px rgba(83,206,251,.5)}
 .arch-soft .king{position:relative;z-index:1}
+
+/* ---------- Runde 38: Team-Kopf mit Film-Video (Gebaeude von aussen, dann das Team) ---------- */
+.ph.film{min-height:100vh;min-height:100svh}
+.ph.film .ph-img video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.74) saturate(.9) contrast(1.05)}
+.ph.film::after{background:linear-gradient(90deg,rgba(3,8,15,.8),rgba(3,8,15,.3) 60%,rgba(3,8,15,.15)),linear-gradient(0deg,rgba(3,8,15,.75),transparent 45%),linear-gradient(180deg,rgba(3,8,15,.45),transparent 22%)}
+.ph.film .ph-in{padding-bottom:clamp(40px,6vh,80px)}
+.film-cue{position:absolute;right:0;bottom:0;font:500 11px var(--f);letter-spacing:.3em;text-transform:uppercase;color:rgba(255,255,255,.7);padding-bottom:34px;margin-right:var(--pad,24px)}
+.film-cue::after{content:"";position:absolute;left:50%;bottom:0;width:1px;height:26px;background:rgba(255,255,255,.7);transform-origin:top;animation:gateCue 1.8s var(--ease) infinite}
+html.sda .ph.film .ph-img video{animation:phPar linear both;animation-timeline:scroll(root);animation-range:0px 1300px}
+@media (max-width:760px){.ph.film{min-height:86svh}.film-cue{display:none}}
