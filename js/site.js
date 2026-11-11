@@ -182,10 +182,49 @@
       var x = -0.12 + 1.24 * t, y = .62 - .34 * t - Math.sin(t * Math.PI) * .05;
       return [x * W, y * H];
     }
-    size(); window.addEventListener('resize', function () { size(); req(); });
+    /* Mit Scroll-Animationen des Browsers: Bewegung laeuft im Takt des Scrollens (kein Zittern in Safari).
+       Die Bahnen werden als Keyframes vorberechnet und bei Groessenaenderung neu gebaut. */
+    var kfEl = null;
+    function cardAt(i, p) {
+      var seg = [[0, .36], [.36, .55], [.55, 1.01]][i], k = (p - seg[0]) / (seg[1] - seg[0]), o, y;
+      if (k < 0) { o = 0; y = 40; } else if (k > 1 && i < 2) { o = 0; y = -40; }
+      else { var e = clamp(k * 4, 0, 1), x = i < 2 ? clamp((1 - k) * 4, 0, 1) : 1; o = Math.min(e, x); y = (1 - e) * 40 - (1 - x) * 40; }
+      return [o, y];
+    }
+    function buildKF() {
+      if (!SDA) return;
+      var N = 48, css = '', i, q, tx, a, b, ang, end = -(3600 * U - W);
+      css += '@keyframes flStrip{from{transform:translate3d(0,0,0) scale(' + U + ')}to{transform:translate3d(' + end.toFixed(1) + 'px,0,0) scale(' + U + ')}}';
+      css += '@keyframes flPlane{';
+      for (i = 0; i <= N; i++) {
+        q = i / N; tx = end * q; a = path(q); b = path(Math.min(1, q + .01)); ang = Math.atan2(b[1] - a[1], b[0] - a[0]) * .5;
+        css += (q * 100).toFixed(3) + '%{transform:translate3d(' + ((a[0] - tx) / U - 160).toFixed(1) + 'px,' + (a[1] / U - 175).toFixed(1) + 'px,0) rotate(' + ang.toFixed(4) + 'rad)}';
+      }
+      css += '}';
+      cards.forEach(function (c, ci) {
+        c.setAttribute('data-fi', ci);
+        css += '@keyframes flCard' + ci + '{';
+        for (i = 0; i <= 100; i++) { var v = cardAt(ci, i / 100); css += i + '%{opacity:' + v[0].toFixed(3) + ';transform:translate(-50%,' + v[1].toFixed(1) + 'px) scale(' + (.94 + v[0] * .06).toFixed(4) + ')}'; }
+        css += '}';
+        css += 'html.sda #stage .mcard[data-fi="' + ci + '"]{animation:flCard' + ci + ' linear both;animation-timeline:--flight;animation-range:contain 0% contain 100%}';
+      });
+      if (!kfEl) { kfEl = document.createElement('style'); kfEl.id = 'flightKF'; document.head.appendChild(kfEl); }
+      kfEl.textContent = css;
+      strip.style.transform = plane.style.transform = '';
+      cards.forEach(function (c) { c.style.opacity = c.style.transform = ''; });
+    }
+    size(); buildKF();
+    var kfT; window.addEventListener('resize', function () { size(); clearTimeout(kfT); kfT = setTimeout(buildKF, 120); req(); });
     tasks.push(function (vh) {
       var r = flight.getBoundingClientRect(), tot = r.height - vh;
       if (r.bottom < 0 || r.top > vh) return;
+      if (SDA) {
+        var pq = clamp(-r.top / tot, 0, 1), dq = Math.round(pq * 90);
+        if (now.textContent !== String(dq)) now.textContent = dq;
+        fill.style.width = (pq * 100).toFixed(2) + '%';
+        [0, 30, 45, 90].forEach(function (d, i) { marks[i].classList.toggle('on', dq >= d); });
+        return;
+      }
       var p = sm(flight, 'p', clamp(-r.top / tot, 0, 1));
       var tx = -(3600 * U - W) * p;
       strip.style.transform = 'translate3d(' + tx + 'px,0,0) scale(' + U + ')';
