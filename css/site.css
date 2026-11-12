@@ -1614,3 +1614,8 @@ html.sda .evc.r .evc-name{animation-name:evcNameR}
   .evh-cities .evl{height:36px}
   .evh-cities .evl-stmoritz{height:30px}
 }
+
+/* ---------- Runde 45: keine Umriss-Zahlen mehr (Wunsch Georgi) ---------- */
+.pillar .pn,.exp .pn,.prob .pn,.way-n{color:var(--sky2);-webkit-text-stroke:0;font-weight:500}
+.evw-n{display:flex;align-items:center;gap:14px;font:600 14px/1 var(--f);letter-spacing:.22em;color:#53CEFB;-webkit-text-stroke:0;margin-bottom:30px}
+.evw-n::after{content:"";flex:0 0 46px;height:1px;background:linear-gradient(90deg,rgba(83,206,251,.8),rgba(83,206,251,0))}
