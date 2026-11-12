@@ -14,8 +14,8 @@
 <meta name="theme-color" content="#052136">
 <link rel="icon" href="../favicon.png?v=gm2" type="image/png"><link rel="apple-touch-icon" href="../apple-touch-icon.png?v=gm2">
 <link rel="preload" href="../fonts/montserrat-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="../css/site.css?v=20261112-124924">
-<script defer src="../js/site.js?v=20261112-124924"></script>
+<link rel="stylesheet" href="../css/site.css?v=20261112-135646">
+<script defer src="../js/site.js?v=20261112-135646"></script>
 </head>
 <body class="" data-lang="de" data-page="contact">
 <a class="skip" href="#main">Zum Inhalt springen</a>
@@ -82,14 +82,19 @@
     <div class="fmsg" role="status" aria-live="polite"></div>
   </form>
 </div></section>
-<section class="sec mapsec"><div class="wrap">
-  <div class="gmap rv" id="gmap" data-src="https://www.google.com/maps?q=GM%20Services%2C%20ul.%20Polkovnik%20Lukashov%205%2C%203000%20Vratsa&amp;ll=43.2038418,23.5491396&amp;z=16&amp;hl=de&amp;output=embed" data-title="So finden Sie uns">
-    <div class="gmap-ph"><svg class="i" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.5-7-12a7 7 0 0 1 14 0c0 5.5-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/></svg><b>So finden Sie uns</b><span>GM Services · ul. Polkovnik Lukashov 5, 3000 Vratsa, Bulgaria</span>
-      <button class="btn dark" type="button" id="gmapBtn"><span>Karte anzeigen</span></button>
-      <a class="link" href="https://www.google.com/maps/place//data=!4m2!3m1!1s0x4fd26567a21921c7:0x13153e5b367eeedf" target="_blank" rel="noopener">In Google Maps öffnen</a>
-      <small>Die Karte kommt von Google Maps. Beim Anzeigen werden Daten an Google übertragen.</small></div>
+<section class="sec findsec">
+  <div class="wrap find">
+    <div class="find-txt rv">
+      <h2 class="h2">So finden Sie uns</h2>
+      <p>Unser Haus steht direkt am Platz mit dem Brunnen, mitten in Vratsa.</p>
+      <p class="find-adr"><svg class="i" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.5-7-12a7 7 0 0 1 14 0c0 5.5-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/></svg><span><b>GM Services</b><br>ul. Polkovnik Lukashov 5<br>3000 Vratsa, Bulgaria</span></p>
+      <div class="btns"><a class="btn dark" href="https://www.google.com/maps/place//data=!4m2!3m1!1s0x4fd26567a21921c7:0x13153e5b367eeedf" target="_blank" rel="noopener"><svg class="king" viewBox="0 0 300 560" aria-hidden="true"><use href="#king"/></svg><span>In Google Maps öffnen</span></a></div>
+    </div>
+    <figure class="find-vid rv"><video src="../media/building2.mp4" poster="../media/building2.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Das Gebäude von GM Services, vom Platz mit dem Brunnen aus gesehen"></video></figure>
   </div>
-</div></section>
+  <div class="gmap" id="gmap" data-src="https://www.google.com/maps?q=GM%20Services%2C%20ul.%20Polkovnik%20Lukashov%205%2C%203000%20Vratsa&amp;ll=43.2038418,23.5491396&amp;z=16&amp;hl=de&amp;output=embed" data-title="So finden Sie uns"></div>
+  <p class="wrap gmap-note"><small>Die Karte kommt von Google Maps. Beim Laden der Karte werden Daten an Google übertragen.</small></p>
+</section>
 </main>
 <footer class="foot">
   <div class="wrap">
@@ -116,6 +121,6 @@
     </div>
   </div>
 </footer>
-<script>window.GM={api:"https://jtmunudieeoqwtbjhcip.supabase.co/functions/v1/web",key:"sb_publishable_HKRzvgsoDbTLcfouA6QDnw_AB34vyKQ",lang:"de",build:"20261112-124924",t:{"sending": "Wird gesendet …", "error": "Das hat leider nicht geklappt. Bitte versuchen Sie es noch einmal oder schreiben Sie an info@gmsrvcs.com.", "book": {"title": "Strategiegespräch buchen · GM Services", "eyebrow": "Kostenloses Strategiegespräch", "h1": "Ihr Termin in <b>drei Schritten</b>", "lead": "Wählen Sie Tag und Uhrzeit, tragen Sie Ihre Daten ein, fertig. Sie erhalten sofort eine Bestätigung per E-Mail.", "s1": "Tag wählen", "s2": "Uhrzeit wählen", "s3": "Daten eintragen", "dur": "30 Minuten · online per Video", "free": "kostenlos und unverbindlich", "tz": "Zeiten in Ihrer Zeitzone", "loading": "Freie Zeiten werden geladen …", "none": "An diesem Tag ist nichts mehr frei. Bitte wählen Sie einen anderen Tag.", "pick_day": "Bitte zuerst einen Tag wählen.", "prev": "Früher", "next": "Später", "chosen": "Ihr Termin", "change": "ändern", "f_goal": "Was möchten Sie erreichen? (optional)", "f_send": "Termin verbindlich buchen", "ok_h": "Ihr Termin steht, {name}.", "ok_p": "Wir haben Ihnen eine Bestätigung an {mail} geschickt, mit dem Link zum Videogespräch. Wir freuen uns auf Sie.", "ok_cal": "In meinen Kalender eintragen", "fallback_h": "Wunschtermin anfragen", "fallback_p": "Die Online-Buchung ist gerade nicht erreichbar. Nennen Sie uns Ihren Wunschtermin, wir bestätigen ihn kurzfristig.", "f_wish": "Wunschtermin (Tag und Uhrzeit)", "taken": "Diese Zeit wurde gerade vergeben. Bitte wählen Sie eine andere.", "unsure_h": "Noch unsicher? <b>Kein Problem.</b>", "unsure_p": "Jede Entscheidung will gut überlegt sein. Das Erstgespräch ist unverbindlich und dient allein dazu, Ihre Fragen zu beantworten und Ihre Ziele zu verstehen. Keine Verpflichtungen, nur Klarheit und neue Perspektiven.", "weekdays": "Mo|Di|Mi|Do|Fr|Sa|So", "months": "Januar|Februar|März|April|Mai|Juni|Juli|August|September|Oktober|November|Dezember", "firm_h": "Zu Ihrem Unternehmen", "req_note": "Wir prüfen Ihren Termin und bestätigen ihn per E-Mail.", "req_send": "Termin anfragen", "req_h": "Danke, {name}. Ihre Terminanfrage ist da.", "req_p": "Wir bestätigen Ihnen den Termin in Kürze per E-Mail."}, "privacy": "/de/privacy", "ok": {"contact": {"h": "Danke, {name}!", "p": "Ihre Nachricht ist angekommen. Wir melden uns in der Regel innerhalb eines Werktags.", "book": "Lieber gleich einen Termin? Strategiegespräch buchen", "bookUrl": "/de/book"}, "apply": {"h": "Danke, {name}!", "p": "Deine Bewerbung ist bei uns angekommen. Wir melden uns in den nächsten Tagen."}}}};</script>
+<script>window.GM={api:"https://jtmunudieeoqwtbjhcip.supabase.co/functions/v1/web",key:"sb_publishable_HKRzvgsoDbTLcfouA6QDnw_AB34vyKQ",lang:"de",build:"20261112-135646",t:{"sending": "Wird gesendet …", "error": "Das hat leider nicht geklappt. Bitte versuchen Sie es noch einmal oder schreiben Sie an info@gmsrvcs.com.", "book": {"title": "Strategiegespräch buchen · GM Services", "eyebrow": "Kostenloses Strategiegespräch", "h1": "Ihr Termin in <b>drei Schritten</b>", "lead": "Wählen Sie Tag und Uhrzeit, tragen Sie Ihre Daten ein, fertig. Sie erhalten sofort eine Bestätigung per E-Mail.", "s1": "Tag wählen", "s2": "Uhrzeit wählen", "s3": "Daten eintragen", "dur": "30 Minuten · online per Video", "free": "kostenlos und unverbindlich", "tz": "Zeiten in Ihrer Zeitzone", "loading": "Freie Zeiten werden geladen …", "none": "An diesem Tag ist nichts mehr frei. Bitte wählen Sie einen anderen Tag.", "pick_day": "Bitte zuerst einen Tag wählen.", "prev": "Früher", "next": "Später", "chosen": "Ihr Termin", "change": "ändern", "f_goal": "Was möchten Sie erreichen? (optional)", "f_send": "Termin verbindlich buchen", "ok_h": "Ihr Termin steht, {name}.", "ok_p": "Wir haben Ihnen eine Bestätigung an {mail} geschickt, mit dem Link zum Videogespräch. Wir freuen uns auf Sie.", "ok_cal": "In meinen Kalender eintragen", "fallback_h": "Wunschtermin anfragen", "fallback_p": "Die Online-Buchung ist gerade nicht erreichbar. Nennen Sie uns Ihren Wunschtermin, wir bestätigen ihn kurzfristig.", "f_wish": "Wunschtermin (Tag und Uhrzeit)", "taken": "Diese Zeit wurde gerade vergeben. Bitte wählen Sie eine andere.", "unsure_h": "Noch unsicher? <b>Kein Problem.</b>", "unsure_p": "Jede Entscheidung will gut überlegt sein. Das Erstgespräch ist unverbindlich und dient allein dazu, Ihre Fragen zu beantworten und Ihre Ziele zu verstehen. Keine Verpflichtungen, nur Klarheit und neue Perspektiven.", "weekdays": "Mo|Di|Mi|Do|Fr|Sa|So", "months": "Januar|Februar|März|April|Mai|Juni|Juli|August|September|Oktober|November|Dezember", "firm_h": "Zu Ihrem Unternehmen", "req_note": "Wir prüfen Ihren Termin und bestätigen ihn per E-Mail.", "req_send": "Termin anfragen", "req_h": "Danke, {name}. Ihre Terminanfrage ist da.", "req_p": "Wir bestätigen Ihnen den Termin in Kürze per E-Mail."}, "privacy": "/de/privacy", "ok": {"contact": {"h": "Danke, {name}!", "p": "Ihre Nachricht ist angekommen. Wir melden uns in der Regel innerhalb eines Werktags.", "book": "Lieber gleich einen Termin? Strategiegespräch buchen", "bookUrl": "/de/book"}, "apply": {"h": "Danke, {name}!", "p": "Deine Bewerbung ist bei uns angekommen. Wir melden uns in den nächsten Tagen."}}}};</script>
 </body>
 </html>
