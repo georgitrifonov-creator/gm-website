@@ -1643,3 +1643,8 @@ html.sda .evc.r .evc-name{animation-name:evcNameR}
 .gmap-ph>span{color:var(--text)}
 .gmap-ph .btn{margin-top:8px}
 .gmap-ph small{max-width:440px;font-size:12.5px;color:var(--muted)}
+
+/* ---------- Runde 48: Hero-Film zeigt das eigene Gebaeude (Himmel oben sichtbar, weniger abgedunkelt) ---------- */
+.ph.film .ph-img video{inset:0;width:100%;height:100%;object-position:50% 0;filter:none}
+.ph.film::after{background:linear-gradient(rgba(10,10,10,.22),rgba(10,10,10,.22)),linear-gradient(90deg,rgba(10,10,10,.72),rgba(10,10,10,.3) 55%,transparent 80%),linear-gradient(0deg,rgba(10,10,10,.6),transparent 50%)}
+@media (max-width:760px){.ph.film .ph-img video{object-position:38% 0}.ph.film::after{background:linear-gradient(rgba(10,10,10,.4),rgba(10,10,10,.4)),linear-gradient(0deg,rgba(10,10,10,.6),transparent 60%)}}
