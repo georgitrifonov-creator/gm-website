@@ -379,7 +379,7 @@
         var p = clamp((vh - r.top) / (vh + r.height), 0, 1);
         return function () {
           im.style.transform = 'translate3d(0,' + ((p - .5) * 12).toFixed(2) + '%,0) scale(1.14)';
-          nm.style.transform = 'translate3d(' + ((.5 - p) * 24 * dir).toFixed(2) + '%,0,0)';
+          if (nm) nm.style.transform = 'translate3d(' + ((.5 - p) * 24 * dir).toFixed(2) + '%,0,0)';
         };
       });
     });
