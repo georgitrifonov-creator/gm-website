@@ -1534,7 +1534,7 @@ html.sda .ph.film .ph-img video{animation:phPar linear both;animation-timeline:s
 .evm{background:var(--night);overflow:hidden;padding:clamp(18px,2.4vw,34px) 0;border-block:1px solid rgba(255,255,255,.1)}
 .evm-t{display:flex;width:max-content;animation:evMarq 60s linear infinite}
 .evm-t span{font:300 clamp(34px,5.4vw,84px)/1 var(--f);text-transform:uppercase;letter-spacing:.02em;color:#fff;white-space:nowrap;display:inline-flex;align-items:center}
-.evm-t span:nth-child(even){color:transparent;-webkit-text-stroke:1px rgba(255,255,255,.55)}
+.evm-t span:nth-child(even){color:rgba(255,255,255,.42)}
 .evm-t span::after{content:"";width:10px;height:10px;border-radius:50%;background:var(--sky);margin:0 clamp(22px,3vw,48px);box-shadow:0 0 18px rgba(83,206,251,.8)}
 @keyframes evMarq{to{transform:translate3d(-50%,0,0)}}
 .sec.evi{padding-bottom:clamp(40px,5vw,70px)}
@@ -1593,3 +1593,24 @@ html.sda .evc.r .evc-name{animation-name:evcNameR}
   .evc-h{font-size:clamp(46px,14vw,80px)}
 }
 @media (prefers-reduced-motion:reduce){.evm-t,.evh-cities li{animation:none}.evc-bg img,.evc-name{animation:none!important}}
+
+/* ---------- Runde 44: Event-Logos statt Umriss-Schrift ---------- */
+.evc{padding-bottom:clamp(110px,15vh,170px)}
+.evc-box{max-width:620px}
+.evc-h{margin:0;font-size:0;line-height:0}
+.evc-h .evl{display:block;width:min(100%,clamp(300px,40vw,600px));height:auto;margin-left:-1.2%;filter:drop-shadow(0 10px 34px rgba(0,0,0,.55))}
+.evc-h .evl-sofia,.evc-h .evl-dubai{width:min(100%,clamp(280px,34vw,520px))}
+.evc.r .evc-box{text-align:left}
+.evc-lead{margin-top:clamp(26px,3vw,40px)}
+.evh-cities{align-items:center;gap:18px clamp(26px,3.6vw,60px)}
+.evh-cities a{display:block;opacity:.82;transition:opacity .3s,transform .5s var(--ease)}
+.evh-cities a:hover{opacity:1;transform:translateY(-3px)}
+.evh-cities .evl{display:block;height:clamp(40px,4.6vw,64px);width:auto}
+.evh-cities .evl-stmoritz{height:clamp(34px,3.8vw,52px)}
+@media (max-width:860px){
+  .evc{padding-bottom:clamp(70px,16vw,110px)}
+  .evc-h .evl,.evc-h .evl-sofia,.evc-h .evl-dubai{width:min(100%,340px)}
+  .evh-cities{gap:16px 26px}
+  .evh-cities .evl{height:36px}
+  .evh-cities .evl-stmoritz{height:30px}
+}
