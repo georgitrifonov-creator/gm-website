@@ -418,6 +418,7 @@
   function vals(form) {
     var o = {};
     $$('input,textarea,select', form).forEach(function (el) { if (!el.name || el.type === 'file') return; o[el.name] = el.type === 'checkbox' ? el.checked : String(el.value).trim(); });
+    if (o.cc !== undefined) { var n = o.phone || ''; if (n && !/^(\+|00)/.test(n)) n = o.cc + ' ' + n.replace(/^0+/, ''); o.phone = n; delete o.cc; }
     return o;
   }
   function doneHtml(h, p, extra) { return '<div class="done"><span class="ok">' + ICO_OK + '</span><h3 class="h3">' + h + '</h3><p>' + p + '</p>' + (extra || '') + '</div>'; }
@@ -453,6 +454,19 @@
   // Themenvorwahl über ?t=
   var qt = new URLSearchParams(location.search).get('t'), ts = $('#f-topic');
   if (qt && ts && $('option[value="' + qt + '"]', ts)) ts.value = qt;
+
+  /* Vorwahl nach Land des Browsers vorbelegen */
+  (function () {
+    var reg = ((navigator.language || '').split('-')[1] || '').toUpperCase();
+    $$('select.cc').forEach(function (s) { var o = reg && $('option[data-r="' + reg + '"]', s); if (o) s.value = o.value; });
+  })();
+  /* Google-Karte erst nach Klick laden */
+  var gmap = $('#gmap'), gbtn = $('#gmapBtn');
+  if (gmap && gbtn) gbtn.addEventListener('click', function () {
+    var f = document.createElement('iframe');
+    f.src = gmap.dataset.src; f.title = gmap.dataset.title || 'Google Maps'; f.loading = 'lazy'; f.setAttribute('allowfullscreen', ''); f.referrerPolicy = 'no-referrer-when-downgrade';
+    gmap.innerHTML = ''; gmap.appendChild(f); gmap.classList.add('on');
+  });
 
   /* ---------- Karriere: Filter, Stellen, Easter Egg ---------- */
   $$('[data-filter]').forEach(function (b) {
@@ -562,7 +576,30 @@
         if (!keys.length) throw new Error('keine Zeiten');
         state.day = keys[0]; state.month = new Date(keys[0] + 'T12:00:00'); state.month.setDate(1);
         renderMonth(); renderSlots();
-      }).catch(function () { pick.hidden = true; fb.hidden = false; stepTo(3); });
+      }).catch(function () {
+        /* Server nicht erreichbar: Kalender mit den ueblichen Zeiten (Mo-Fr 9-18 Uhr Sofia), Termin geht als Anfrage raus */
+        state.req = true; byDay = {};
+        var pf = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Sofia', hour12: false, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+        var sofia = function (y, m, d, h, mi) {
+          var u = Date.UTC(y, m, d, h, mi), p = {}; pf.formatToParts(new Date(u)).forEach(function (x) { p[x.type] = +x.value; });
+          return u - (Date.UTC(p.year, p.month - 1, p.day, p.hour % 24, p.minute) - u);
+        };
+        var now = Date.now(), base = new Date(now);
+        for (var i = 1; i <= 21; i++) {
+          var d = new Date(Date.UTC(base.getUTCFullYear(), base.getUTCMonth(), base.getUTCDate() + i, 12)), wd = d.getUTCDay();
+          if (wd === 0 || wd === 6) continue;
+          for (var h = 9 * 60; h + 30 <= 18 * 60; h += 30) {
+            var t = sofia(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), Math.floor(h / 60), h % 60);
+            if (t < now + 24 * 3600e3) continue;
+            var k = dkey(new Date(t)); (byDay[k] = byDay[k] || []).push(t);
+          }
+        }
+        var keys = Object.keys(byDay).sort();
+        state.day = keys[0]; state.month = new Date(keys[0] + 'T12:00:00'); state.month.setDate(1);
+        var rq = $('#bkReq'); if (rq) rq.hidden = false;
+        var sb = $('button[type=submit] span', form); if (sb) sb.textContent = B.req_send;
+        renderMonth(); renderSlots();
+      });
     }
     load();
     form.addEventListener('submit', function (e) {
@@ -570,6 +607,14 @@
       var v = vals(form), btn = $('button[type=submit]', form), lbl = btn.innerHTML;
       v.slot = state.slot; v.tz = tz;
       btn.disabled = true; btn.querySelector('span').textContent = G.t.sending;
+      if (state.req) {
+        v.topic = 'book'; v.wish = $('#bkChosen').textContent + ' (' + tz + ')';
+        api('contact', v).then(function () {
+          form.hidden = true; doneEl.hidden = false; steps.forEach(function (x) { x.classList.add('ok'); x.classList.remove('on'); });
+          doneEl.innerHTML = doneHtml(esc(B.req_h).replace('{name}', esc((v.name || '').split(' ')[0])), esc(B.req_p), '<p><b>' + esc($('#bkChosen').textContent) + '</b></p>');
+        }).catch(function (err) { btn.disabled = false; btn.innerHTML = lbl; fail(form, err); });
+        return;
+      }
       api('book', v).then(function (j) {
         var first = (v.name || '').split(' ')[0], s = new Date(state.slot), en = new Date(state.slot + 30 * 60000);
         var ics = 'data:text/calendar;charset=utf-8,' + encodeURIComponent(['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//GM Services//Web//DE', 'BEGIN:VEVENT', 'UID:' + (j.id || Date.now()) + '@gmsrvcs.com',
