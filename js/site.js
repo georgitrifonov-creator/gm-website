@@ -460,13 +460,20 @@
     var reg = ((navigator.language || '').split('-')[1] || '').toUpperCase();
     $$('select.cc').forEach(function (s) { var o = reg && $('option[data-r="' + reg + '"]', s); if (o) s.value = o.value; });
   })();
-  /* Google-Karte erst nach Klick laden */
-  var gmap = $('#gmap'), gbtn = $('#gmapBtn');
-  if (gmap && gbtn) gbtn.addEventListener('click', function () {
-    var f = document.createElement('iframe');
-    f.src = gmap.dataset.src; f.title = gmap.dataset.title || 'Google Maps'; f.loading = 'lazy'; f.setAttribute('allowfullscreen', ''); f.referrerPolicy = 'no-referrer-when-downgrade';
-    gmap.innerHTML = ''; gmap.appendChild(f); gmap.classList.add('on');
-  });
+  /* Runde 49: Google-Karte laedt von selbst, sobald sie in die Naehe des Bildes kommt */
+  var gmap = $('#gmap');
+  if (gmap) {
+    var gload = function () {
+      if (gmap.classList.contains('on')) return;
+      var f = document.createElement('iframe');
+      f.src = gmap.dataset.src; f.title = gmap.dataset.title || 'Google Maps'; f.setAttribute('allowfullscreen', ''); f.referrerPolicy = 'no-referrer-when-downgrade';
+      gmap.appendChild(f); gmap.classList.add('on');
+    };
+    if ('IntersectionObserver' in window) {
+      var gio = new IntersectionObserver(function (es) { if (es.some(function (e) { return e.isIntersecting; })) { gio.disconnect(); gload(); } }, { rootMargin: '500px 0px' });
+      gio.observe(gmap);
+    } else gload();
+  }
 
   /* ---------- Karriere: Filter, Stellen, Easter Egg ---------- */
   $$('[data-filter]').forEach(function (b) {
