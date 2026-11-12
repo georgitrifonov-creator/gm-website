@@ -355,6 +355,36 @@
   }
   frame();
 
+  /* Runde 43: Event-Seite. Seitliche Orts-Leiste, Ort im Formular vorwaehlen, Bewegung fuer Browser ohne Scroll-Animationen */
+  var evcs = $$('.evc');
+  if (evcs.length) {
+    var evnav = $('#evnav'), evl = evnav ? $$('a', evnav) : [];
+    if ('IntersectionObserver' in window) {
+      var evIO = new IntersectionObserver(function (es) {
+        es.forEach(function (e) { e.target._on = e.isIntersecting; });
+        var act = -1; evcs.forEach(function (x, i) { if (x._on) act = i; });
+        if (evnav) evnav.classList.toggle('on', act >= 0);
+        evl.forEach(function (a, i) { a.classList.toggle('on', i === act); });
+      }, { rootMargin: '-50% 0px -50% 0px' });
+      evcs.forEach(function (x) { evIO.observe(x); });
+    }
+    document.addEventListener('click', function (e) {
+      var a = e.target.closest && e.target.closest('[data-place]'); if (!a) return;
+      var sel = $('#f-place'); if (sel) sel.selectedIndex = +a.getAttribute('data-place');
+    });
+    if (!SDA && !RM) evcs.forEach(function (x) {
+      var im = $('.evc-bg img', x), nm = $('.evc-name', x), dir = x.classList.contains('r') ? -1 : 1;
+      tasks.push(function (vh) {
+        var r = x.getBoundingClientRect(); if (r.bottom < 0 || r.top > vh) return;
+        var p = clamp((vh - r.top) / (vh + r.height), 0, 1);
+        return function () {
+          im.style.transform = 'translate3d(0,' + ((p - .5) * 12).toFixed(2) + '%,0) scale(1.14)';
+          nm.style.transform = 'translate3d(' + ((.5 - p) * 24 * dir).toFixed(2) + '%,0,0)';
+        };
+      });
+    });
+  }
+
   /* Runde 28: ausserhalb des Bildes ruht alles (sonst zittern haftende Karten in Safari) */
   if ('IntersectionObserver' in window) {
     var offIO = new IntersectionObserver(function (es) {
