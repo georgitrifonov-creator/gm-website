@@ -87,6 +87,15 @@
   document.addEventListener('click', function (e) { if (!e.target.closest('.dd')) $$('.dd.open').forEach(function (x) { x.classList.remove('open'); }); });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { $$('.dd.open').forEach(function (x) { x.classList.remove('open'); }); document.body.classList.remove('menu-open'); } });
   $$('.menu a').forEach(function (a) { a.addEventListener('click', function () { document.body.classList.remove('menu-open'); }); });
+  /* Runde 50: Link auf die Seite, auf der man schon ist, fuehrt nach ganz oben (statt Neuladen an alter Stelle) */
+  document.addEventListener('click', function (e) {
+    if (e.defaultPrevented || e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    var a = e.target.closest && e.target.closest('a[href]'); if (!a || a.target === '_blank' || a.hasAttribute('download')) return;
+    var u; try { u = new URL(a.href); } catch (x) { return; }
+    var same = function (p) { return p.replace(/index\.html$/, '').replace(/\.html$/, '').replace(/\/$/, ''); };
+    if (u.origin !== location.origin || u.hash || u.search !== location.search || same(u.pathname) !== same(location.pathname)) return;
+    e.preventDefault(); window.scrollTo({ top: 0, behavior: RM ? 'auto' : 'smooth' });
+  });
 
   /* E-Mail kopieren */
   $$('[data-copy]').forEach(function (b) {
