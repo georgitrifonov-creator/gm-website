@@ -162,7 +162,7 @@
     var h1 = $('#heroTitle');
     if (h1 && !RM) {
       var i = 0, tw = document.createTreeWalker(h1, NodeFilter.SHOW_TEXT), nodes = [];
-      while (tw.nextNode()) if (tw.currentNode.textContent.trim()) nodes.push(tw.currentNode);
+      while (tw.nextNode()) if (tw.currentNode.textContent.trim() && !tw.currentNode.parentNode.closest('.kicker')) nodes.push(tw.currentNode);
       nodes.forEach(function (n) {
         var f = document.createDocumentFragment();
         n.textContent.split(/(\s+)/).forEach(function (w) {
@@ -264,7 +264,7 @@
   function laneOn(l) { lanes.forEach(function (x) { x.classList.toggle('on', x === l); }); }
   lanes.forEach(function (l) {
     l.addEventListener('mouseenter', function () { if (window.innerWidth > 860) laneOn(l); });
-    l.addEventListener('focus', function () { laneOn(l); });
+    l.addEventListener('focusin', function () { laneOn(l); });
     l.addEventListener('click', function (e) { if (window.innerWidth > 860 && !l.classList.contains('on')) { e.preventDefault(); laneOn(l); } });
   });
 
