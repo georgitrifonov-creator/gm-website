@@ -1824,4 +1824,9 @@ html.sda .evc.r .evc-name{animation-name:evcNameR}
   .stage{contain:paint}
 }
 
+/* Runde 59: Event-Hintergrund Saal */
+.ph.evh .ph-img img{filter:brightness(.7) saturate(1.02);object-position:50% 50%}
+.ph.evh .ph-img::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(8,8,10,.62),rgba(8,8,10,.15) 70%),linear-gradient(0deg,rgba(8,8,10,.55),transparent 45%);pointer-events:none}
+@media (max-width:760px){.ph.evh .ph-img img{object-position:62% 50%;-webkit-mask-image:none;mask-image:none}.ph.evh .ph-img::after{background:linear-gradient(180deg,rgba(8,8,10,.35),rgba(8,8,10,.75))}}
+
 gm-b{font-weight:bolder}
