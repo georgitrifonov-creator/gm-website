@@ -26,7 +26,12 @@
   }
   fitHeads();
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitHeads);
-  var fitT; window.addEventListener('resize', function () { clearTimeout(fitT); fitT = setTimeout(fitHeads, 150); });
+  /* Am iPhone meldet die ein- und ausfahrende Adressleiste beim Scrollen staendig "resize" (nur die Hoehe aendert sich).
+     Dann nichts neu messen oder schreiben, sonst flackern Ueberschriften und Animationen. */
+  var lastW = window.innerWidth;
+  function onWidth(fn) { window.addEventListener('resize', function () { if (window.innerWidth === lastW) return; fn(); }); }
+  window.addEventListener('resize', function () { setTimeout(function () { lastW = window.innerWidth; }, 0); });
+  var fitT; onWidth(function () { clearTimeout(fitT); fitT = setTimeout(fitHeads, 150); });
 
   /* ---------- Kopfleiste ---------- */
   /* Runter scrollen blendet die Leiste aus, erst echtes Hochscrollen holt sie zurueck.
@@ -69,7 +74,7 @@
     navSet('tdark', lum < .5);
   }
   var _onNav = onNav; onNav = function () { _onNav(); tint(); };
-  window.addEventListener('resize', function () { tintKey = ''; tint(); });
+  onWidth(function () { tintKey = ''; tint(); });
   window.addEventListener('scroll', onNav, { passive: true }); onNav();
   nav.addEventListener('focusin', function () { nav.classList.remove('hide'); navRun = 0; tint(); });
   var burger = $('#burger');
@@ -228,7 +233,14 @@
     size(); buildKF();
     if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { es.forEach(function (e) { flight.classList.toggle('live', e.isIntersecting); }); }, { rootMargin: '300px 0px' }).observe(flight);
     else flight.classList.add('live');
-    var kfT; window.addEventListener('resize', function () { size(); clearTimeout(kfT); kfT = setTimeout(buildKF, 120); req(); });
+    /* Nur bei echter Größenänderung neu bauen: am iPhone feuert "resize" ständig, wenn beim Scrollen die
+       Adressleiste ein- und ausfährt. Das Neuschreiben der Keyframes ließ Flieger und Karten flackern. */
+    var kfT, kfW = W, kfH = H;
+    window.addEventListener('resize', function () {
+      size();
+      if (Math.abs(W - kfW) < 2 && Math.abs(H - kfH) < 80) return;
+      kfW = W; kfH = H; clearTimeout(kfT); kfT = setTimeout(buildKF, 160); req();
+    });
     tasks.push(function (vh) {
       var r = flight.getBoundingClientRect(), tot = r.height - vh;
       if (r.bottom < 0 || r.top > vh) return;
@@ -348,7 +360,7 @@
     var rocks = $$('.rock', arena), statue = $('.statue', arena), band = $('.band-txt', arena), mx = 0, my = 0, cx = 0, cy = 0, run = false;
     function place() { var a = arena.getBoundingClientRect(), st = statue.getBoundingClientRect(), sh = st.height || a.height * .8, cxs = st.left - a.left + st.width / 2, top = st.top - a.top; var k = Math.min(1, (a.width / 2 - 8) / (.92 * sh)); /* schmale Bildschirme: Felsen enger um Herkules, damit alle sichtbar bleiben */ rocks.forEach(function (r) { r.style.width = (sh * parseFloat(r.dataset.w) * Math.max(k, .62)) + 'px'; r.dataset.bx = cxs + parseFloat(r.dataset.x) * sh * k; r.dataset.by = top + parseFloat(r.dataset.y) * sh; }); }
     statue.addEventListener('load', place);
-    place(); window.addEventListener('resize', place);
+    place(); onWidth(place);
     arena.addEventListener('pointermove', function (e) { var r = arena.getBoundingClientRect(); mx = (e.clientX - r.left) / r.width - .5; my = (e.clientY - r.top) / r.height - .5; if (!run) { run = true; requestAnimationFrame(loop); } });
     function loop() {
       var ar = arena.getBoundingClientRect(); if (ar.bottom < -50 || ar.top > window.innerHeight + 50) { run = false; return; }
