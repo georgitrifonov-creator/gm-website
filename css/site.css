@@ -1706,5 +1706,8 @@ html.sda .evc.r .evc-name{animation-name:evcNameR}
 .sub .cap a{color:inherit;text-decoration:none}
 .subs .sub:focus-within{flex:1.8}
 .sub:focus-within .cap span:last-child{opacity:.92;transform:none}
+.sub .cap a:last-child{font:400 13px/1.4 var(--f);letter-spacing:.02em;text-transform:none;max-width:24ch;text-align:right;opacity:0;transform:translateY(10px);transition:.6s}
+.sub:hover .cap a:last-child,.sub:focus-within .cap a:last-child{opacity:.92;transform:none}
+@media (max-width:760px){.sub .cap a:last-child{opacity:.9;transform:none}}
 
 gm-b{font-weight:bolder}
